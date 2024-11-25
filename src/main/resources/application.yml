@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:8081}
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+jwt:
+  secret-key: ${JWT_SECRET_KEY:89JZa4FRE7YEelJdnQC/6gYzZZPdEZOizIHJMaDEPNU=}
+  expiration-in-ms: 86400000
+spring:
+  application:
+    name: quiz-server
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_quiz_server}
+    username: ${DB_USERNAME:own_user}
+    password: ${DB_PASSWORD:secret_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
