@@ -1,9 +1,10 @@
 package com.arutyun.quiz_server.auth.security.filter;
 
-import com.arutyun.quiz_server.auth.exception.UserUnauthorizedException;
 import com.arutyun.quiz_server.auth.exception.WrappedAuthenticationException;
 import com.arutyun.quiz_server.auth.security.entrypoint.JwtAuthenticationEntryPoint;
 import com.arutyun.quiz_server.auth.security.service.JwtService;
+import com.arutyun.quiz_server.auth.security.service.TokenService;
+import com.arutyun.quiz_server.common.exception.BaseUnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenService tokenService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 
@@ -42,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             final String authHeader = request.getHeader("Authorization");
             final String jwtToken = jwtService.parseTokenByType(authHeader);
+            tokenService.tokenIsPresented(jwtToken);
 
             if (jwtToken != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final String username = jwtService.extractUsername(jwtToken);
@@ -66,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
 
-        } catch (UserUnauthorizedException exception) {
+        } catch (BaseUnauthorizedException exception) {
             SecurityContextHolder.clearContext();
             jwtAuthenticationEntryPoint.commence(request, response, new WrappedAuthenticationException(exception));
         }
