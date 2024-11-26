@@ -28,44 +28,36 @@ public class AuthController {
     public ResponseEntity<ResponseDto> authenticate(
             @RequestHeader("device_id") String deviceId,
             @Valid @RequestBody RequestLoginDto request
-    ) {
-        try {
-            final UserEntity user = userService.findUser(
-                    request.username(),
-                    request.password()
-            );
+    ) throws BaseException {
+        final UserEntity user = userService.findUser(
+                request.username(),
+                request.password()
+        );
 
-            final TokenEntity token = authService.generateToken(
-                    user,
-                    deviceId
-            );
+        final TokenEntity token = authService.generateToken(
+                user,
+                deviceId
+        );
 
-            return ResponseWrapper.ok(token, tokenDtoConverter);
-        } catch (BaseException exception) {
-            return ResponseWrapper.error(exception);
-        }
+        return ResponseWrapper.ok(token, tokenDtoConverter);
     }
 
     @PostMapping("/api/auth/register")
     public ResponseEntity<ResponseDto> register(
             @RequestHeader("device_id") String deviceId,
             @Valid @RequestBody RequestRegisterDto request
-    ) {
-        try {
-            final UserEntity user = userService.createUser(
-                    request.username(),
-                    request.password(),
-                    request.email()
-            );
+    ) throws BaseException {
+        final UserEntity user = userService.createUser(
+                request.username(),
+                request.password(),
+                request.email()
+        );
 
-            final TokenEntity token = authService.generateToken(
-                    user,
-                    deviceId
-            );
+        final TokenEntity token = authService.generateToken(
+                user,
+                deviceId
+        );
 
-            return ResponseWrapper.ok(token, tokenDtoConverter);
-        } catch (BaseException exception) {
-            return ResponseWrapper.error(exception);
-        }
+        return ResponseWrapper.ok(token, tokenDtoConverter);
     }
 }
