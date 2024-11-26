@@ -7,7 +7,8 @@ logging:
         security: DEBUG
 jwt:
   secret-key: ${JWT_SECRET_KEY:89JZa4FRE7YEelJdnQC/6gYzZZPdEZOizIHJMaDEPNU=}
-  expiration-in-ms: 86400000
+  access-expiration-in-ms: 3600000
+  refresh-expiration-in-ms: 604800000
 spring:
   application:
     name: quiz-server

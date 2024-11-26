@@ -21,8 +21,11 @@ public class JwtService {
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
 
-    @Value("${jwt.expiration-in-ms}")
-    private long TOKEN_VALIDITY;
+    @Value("${jwt.access-expiration-in-ms}")
+    private long ACCESS_TOKEN_VALIDITY;
+
+    @Value("${jwt.refresh-expiration-in-ms}")
+    private long REFRESH_TOKEN_VALIDITY;
 
     private final static String TOKEN_TYPE = "Bearer ";
 
@@ -37,28 +40,44 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
-        return generateToken(claims, userDetails);
+        claims.put("token_type", "access_token");
+        return generateToken(claims, userDetails, ACCESS_TOKEN_VALIDITY);
     }
 
-    public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("token_type", "refresh_token");
+        return generateToken(claims, userDetails, REFRESH_TOKEN_VALIDITY);
+    }
+
+    private String generateToken(
+            Map<String, Object> claims,
+            UserDetails userDetails,
+            long tokenValidity
+    ) {
+        final long now = System.currentTimeMillis();
         return Jwts
                 .builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY))
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + tokenValidity))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) throws UserUnauthorizedException {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final boolean isAccessToken = extractClaim(
+                token,
+                claims -> claims.get("token_type").toString().equals("access_token")
+        );
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isAccessToken;
     }
 
     private boolean isTokenExpired(String token) throws UserUnauthorizedException {

@@ -35,6 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         try {
+            if (request.getRequestURI().startsWith("/api/auth")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             final String authHeader = request.getHeader("Authorization");
             final String jwtToken = jwtService.parseTokenByType(authHeader);
