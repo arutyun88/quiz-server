@@ -3,7 +3,6 @@ package com.arutyun.quiz_server.auth.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
@@ -22,7 +21,6 @@ import java.util.UUID;
 )
 @NoArgsConstructor
 @Getter
-@ToString
 public class TokenEntity {
 
     @Id
@@ -42,7 +40,6 @@ public class TokenEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
     private UserEntity user;
 
     public TokenEntity(

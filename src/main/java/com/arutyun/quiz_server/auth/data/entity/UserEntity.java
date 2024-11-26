@@ -3,10 +3,8 @@ package com.arutyun.quiz_server.auth.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
@@ -15,7 +13,6 @@ import java.util.*;
 @Table(name = "users")
 @NoArgsConstructor
 @Getter
-@ToString
 public class UserEntity implements UserDetails {
 
     @Id
@@ -30,22 +27,32 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private final Set<RoleEntity> roles = new HashSet<>();
 
     public UserEntity(
             String username,
             String password,
-            Role role
+            String email,
+            Set<RoleEntity> roles
     ) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.email = email;
+        this.roles.addAll(roles);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return roles;
     }
 
     @Override
