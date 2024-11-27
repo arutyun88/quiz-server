@@ -2,11 +2,14 @@ package com.arutyun.quiz_server.auth.service.impl;
 
 import com.arutyun.quiz_server.auth.data.entity.TokenEntity;
 import com.arutyun.quiz_server.auth.data.repository.TokenRepository;
+import com.arutyun.quiz_server.auth.exception.TokenNotFoundException;
+import com.arutyun.quiz_server.auth.exception.UserUnauthorizedException;
 import com.arutyun.quiz_server.auth.security.service.JwtService;
 import com.arutyun.quiz_server.auth.service.AuthService;
 import com.arutyun.quiz_server.common.exception.BaseException;
 import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 import com.arutyun.quiz_server.auth.exception.UserTokenCreateException;
+import com.arutyun.quiz_server.common.exception.BaseUnauthorizedException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
@@ -40,5 +43,23 @@ public class AuthServiceImpl implements AuthService {
         } catch (HibernateException exception) {
             throw new UserTokenCreateException("Tokens is not created");
         }
+    }
+
+    @Override
+    public TokenEntity fetchTokenByRefresh(String deviceId, String refreshToken) throws BaseUnauthorizedException {
+        System.out.println("fetchTokenByRefresh");
+        if (jwtService.isTokenExpired(refreshToken)) {
+            throw new UserUnauthorizedException("Token is expired");
+        }
+
+        final TokenEntity token = tokenRepository.findByRefreshToken(refreshToken).orElseThrow(
+                () -> new TokenNotFoundException("Token already refreshed")
+        );
+
+        if (!token.getDeviceId().equals(deviceId)) {
+            throw new TokenNotFoundException("Token already refreshed");
+        }
+
+        return token;
     }
 }

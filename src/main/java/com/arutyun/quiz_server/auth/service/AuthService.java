@@ -6,4 +6,6 @@ import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 
 public interface AuthService {
     TokenEntity generateToken(UserEntity user, String deviceId) throws BaseException;
+
+    TokenEntity fetchTokenByRefresh(String deviceId, String token) throws BaseException;
 }

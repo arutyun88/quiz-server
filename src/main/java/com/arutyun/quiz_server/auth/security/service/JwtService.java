@@ -80,7 +80,7 @@ public class JwtService {
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isAccessToken;
     }
 
-    private boolean isTokenExpired(String token) throws UserUnauthorizedException {
+    public boolean isTokenExpired(String token) throws UserUnauthorizedException {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
