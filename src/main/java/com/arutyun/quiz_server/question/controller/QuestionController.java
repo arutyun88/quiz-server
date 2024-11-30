@@ -4,6 +4,7 @@ import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 import com.arutyun.quiz_server.auth.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
 import com.arutyun.quiz_server.common.dto.response.ResponseWrapper;
+import com.arutyun.quiz_server.common.model.DataMeta;
 import com.arutyun.quiz_server.question.converter.QuestionDtoConverter;
 import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
 import com.arutyun.quiz_server.question.service.QuestionService;
@@ -15,8 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,11 @@ public class QuestionController {
             @RequestHeader(value = "X-Limit", required = false, defaultValue = "1") int limit
     ) {
         final UserEntity user = userService.getCurrentUser();
-        List<QuestionEntity> questions = questionService.getRandomQuestions(user, limit);
-        return ResponseWrapper.ok(questions, questionDtoConverter);
+        DataMeta<QuestionEntity> result = questionService.getRandomQuestions(user, limit);
+        return ResponseWrapper.ok(
+                result.getData(),
+                questionDtoConverter,
+                result.getMeta()
+        );
     }
 }

@@ -1,5 +1,6 @@
 package com.arutyun.quiz_server.common.dto.response;
 
+import com.arutyun.quiz_server.common.model.Meta;
 import com.arutyun.quiz_server.common.dto.converter.DtoConverter;
 import com.arutyun.quiz_server.common.exception.BaseException;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public abstract class ResponseWrapper {
             DtoConverter<T, D> converter
     ) {
         return ResponseEntity.ok(
-                new ResponseSuccessDto<T>(
+                ResponseSuccessDto.of(
                         converter.convert(data)
                 )
         );
@@ -24,13 +25,15 @@ public abstract class ResponseWrapper {
 
     public static <T, D> ResponseEntity<ResponseDto> ok(
             List<D> data,
-            DtoConverter<T, D> converter
+            DtoConverter<T, D> converter,
+            Meta meta
     ) {
         return ResponseEntity.ok(
-                new ResponseSuccessDto<List<T>>(
+                ResponseSuccessDto.of(
                         data.stream()
                                 .map(converter::convert)
-                                .toList()
+                                .toList(),
+                        metaConvert(meta)
                 )
         );
     }
@@ -44,6 +47,14 @@ public abstract class ResponseWrapper {
                         exception.getError(),
                         exception.getMessage()
                 )
+        );
+    }
+
+    private static ResponseMetaDto metaConvert(Meta meta) {
+        return new ResponseMetaDto(
+                meta.limit(),
+                meta.offset(),
+                meta.total()
         );
     }
 }

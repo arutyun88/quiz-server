@@ -1,6 +1,8 @@
 package com.arutyun.quiz_server.question.service.impl;
 
 import com.arutyun.quiz_server.auth.data.entity.UserEntity;
+import com.arutyun.quiz_server.common.model.Meta;
+import com.arutyun.quiz_server.common.model.DataMeta;
 import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
 import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;
 import com.arutyun.quiz_server.question.data.repository.QuestionRepository;
@@ -20,18 +22,22 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public List<QuestionEntity> getRandomQuestions(UserEntity user, int limit) {
+    public DataMeta<QuestionEntity> getRandomQuestions(UserEntity user, int limit) {
+        List<QuestionEntity> questions;
+        int total;
         if (user == null) {
-            return questionRepository.findRandomQuestions(limit);
+            questions = questionRepository.findRandomQuestions(limit);
+            total = questionRepository.countTotalQuestions();
         } else {
-            List<QuestionEntity> questions = questionRepository.findRandomQuestionsExcludingUserAnswered(
+            questions = questionRepository.findRandomQuestionsExcludingUserAnswered(
                     user.getId(),
                     limit
             );
+            total = questionRepository.countTotalQuestionsExcludingUserAnswered(user.getId());
 
             logQuestionsForUser(user, questions);
-            return questions;
         }
+        return new DataMeta<>(questions, new Meta(limit, 0, total - questions.size()));
     }
 
     private void logQuestionsForUser(UserEntity user, List<QuestionEntity> questions) {

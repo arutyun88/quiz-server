@@ -33,4 +33,24 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
             @Param("user_id") UUID userId,
             @Param("limit") int limit
     );
+
+    @Query(
+            value = "SELECT COUNT(*) FROM questions",
+            nativeQuery = true
+    )
+    int countTotalQuestions();
+
+    @Query(
+            value = """
+                    SELECT COUNT(*) FROM questions q
+                    WHERE q.id NOT IN (
+                        SELECT l.question_id FROM user_question_logs l
+                        WHERE l.user_id = :user_id
+                    )
+                    """,
+            nativeQuery = true
+    )
+    int countTotalQuestionsExcludingUserAnswered(
+            @Param("user_id") UUID userId
+    );
 }
