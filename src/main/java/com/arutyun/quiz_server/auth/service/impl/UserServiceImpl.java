@@ -2,17 +2,17 @@ package com.arutyun.quiz_server.auth.service.impl;
 
 import com.arutyun.quiz_server.auth.data.entity.RoleEntity;
 import com.arutyun.quiz_server.auth.data.repository.RoleRepository;
-import com.arutyun.quiz_server.auth.exception.UserAlreadyExistException;
+import com.arutyun.quiz_server.auth.exception.*;
 import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 import com.arutyun.quiz_server.auth.data.repository.UserRepository;
-import com.arutyun.quiz_server.auth.exception.UserCreateUnknownException;
-import com.arutyun.quiz_server.auth.exception.UsernameOrPasswordInvalidException;
 import com.arutyun.quiz_server.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,4 +78,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public UserEntity getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()) {
+            final Object principal = authentication.getPrincipal();
+            if (principal instanceof UserEntity user) {
+                return user;
+            }
+        }
+        return null;
+    }
 }

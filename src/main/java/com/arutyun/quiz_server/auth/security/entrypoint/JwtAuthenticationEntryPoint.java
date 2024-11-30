@@ -9,6 +9,7 @@ import com.arutyun.quiz_server.common.exception.BaseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,9 +30,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
+        if (authException.getCause() instanceof ConstraintViolationException) {
+            throw authException;
+        }
+
         final BaseException exception;
-        if (authException instanceof WrappedAuthenticationException) {
-            exception = ((WrappedAuthenticationException) authException).getException();
+        if (authException instanceof WrappedAuthenticationException wrappedAuthenticationException) {
+            exception = wrappedAuthenticationException.getException();
         } else if (authException instanceof BadCredentialsException) {
             exception = new UsernameOrPasswordInvalidException(authException.getMessage());
         } else {

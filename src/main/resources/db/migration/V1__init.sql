@@ -45,3 +45,11 @@ CREATE TABLE tokens
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     UNIQUE (user_id, device_id)
 );
+
+-- Создание таблицы questions
+CREATE TABLE questions
+(
+    id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    correct_answer CHAR(1)      NOT NULL,
+    question       JSONB        NOT NULL
+);

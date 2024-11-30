@@ -43,6 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             final String authHeader = request.getHeader("Authorization");
+            if(authHeader == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             final String jwtToken = jwtService.parseTokenByType(authHeader);
             tokenService.tokenIsPresented(jwtToken);
 
