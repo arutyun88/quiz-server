@@ -22,22 +22,26 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public DataMeta<QuestionEntity> getRandomQuestions(UserEntity user, int limit) {
+    public DataMeta<QuestionEntity> getRandomQuestions(UserEntity user, int limit, String language) {
         List<QuestionEntity> questions;
         int total;
         if (user == null) {
-            questions = questionRepository.findRandomQuestions(limit);
-            total = questionRepository.countTotalQuestions();
+            questions = questionRepository.findRandomQuestions(
+                    limit,
+                    language
+            );
+            total = questionRepository.countTotalQuestions(language);
         } else {
             questions = questionRepository.findRandomQuestionsExcludingUserAnswered(
                     user.getId(),
-                    limit
+                    limit,
+                    language
             );
-            total = questionRepository.countTotalQuestionsExcludingUserAnswered(user.getId());
+            total = questionRepository.countTotalQuestionsExcludingUserAnswered(user.getId(), language);
 
             logQuestionsForUser(user, questions);
         }
-        return new DataMeta<>(questions, new Meta(limit, 0, total - questions.size()));
+        return new DataMeta<>(questions, new Meta(limit, 0, total));
     }
 
     private void logQuestionsForUser(UserEntity user, List<QuestionEntity> questions) {

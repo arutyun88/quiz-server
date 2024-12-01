@@ -29,10 +29,11 @@ public class QuestionController {
     public ResponseEntity<ResponseDto> questions(
             @Min(value = 1, message = "X-Limit must be at least 1")
             @Max(value = 50, message = "X-Limit cannot exceed 50")
-            @RequestHeader(value = "X-Limit", required = false, defaultValue = "1") int limit
+            @RequestHeader(value = "X-Limit", required = false, defaultValue = "1") int limit,
+            @RequestHeader(value = "X-Lang") String language
     ) {
         final UserEntity user = userService.getCurrentUser();
-        DataMeta<QuestionEntity> result = questionService.getRandomQuestions(user, limit);
+        DataMeta<QuestionEntity> result = questionService.getRandomQuestions(user, limit, language);
         return ResponseWrapper.ok(
                 result.getData(),
                 questionDtoConverter,

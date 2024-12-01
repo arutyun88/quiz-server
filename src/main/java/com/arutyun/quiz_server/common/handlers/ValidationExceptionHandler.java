@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -46,6 +47,18 @@ public class ValidationExceptionHandler {
         return ResponseWrapper.error(
                 new CommonBadRequestException(
                         errors.delete(errors.length() - 2, errors.length()).toString()
+                )
+        );
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ResponseDto> handleValidationExceptions(MissingRequestHeaderException ex) {
+
+        String errors = String.format("%s - %s", ex.getHeaderName(), ex.getMessage());
+
+        return ResponseWrapper.error(
+                new CommonBadRequestException(
+                        errors
                 )
         );
     }
