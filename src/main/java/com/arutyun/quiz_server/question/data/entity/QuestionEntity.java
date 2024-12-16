@@ -1,18 +1,18 @@
 package com.arutyun.quiz_server.question.data.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
-import org.hibernate.type.SqlTypes;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "questions")
+@Table(name = "question")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class QuestionEntity {
 
@@ -22,10 +22,11 @@ public class QuestionEntity {
     @Column(updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
-    @Column(name = "correct_answer", nullable = false, length = 1)
-    private char correctAnswer;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "translations", nullable = false)
+    private List<QuestionTranslation> translations;
 
-    @Column(nullable = false, columnDefinition = "jsonb")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, LocalizedQuestionEntity> question;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "answers", nullable = false)
+    private List<AnswerEntity> answers;
 }

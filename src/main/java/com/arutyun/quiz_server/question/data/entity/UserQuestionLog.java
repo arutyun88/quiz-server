@@ -9,7 +9,7 @@ import org.hibernate.annotations.UuidGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_question_logs")
+@Table(name = "user_question_log")
 @NoArgsConstructor
 @Getter
 public class UserQuestionLog {

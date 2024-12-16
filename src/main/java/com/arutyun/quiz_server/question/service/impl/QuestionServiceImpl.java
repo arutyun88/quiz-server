@@ -24,24 +24,25 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public DataMeta<QuestionEntity> getRandomQuestions(UserEntity user, int limit, String language) {
         List<QuestionEntity> questions;
-        int total;
+        int total = questionRepository.countTotalQuestions(language);
+        int offset;
         if (user == null) {
             questions = questionRepository.findRandomQuestions(
                     limit,
                     language
             );
-            total = questionRepository.countTotalQuestions(language);
+            offset = 0;
         } else {
             questions = questionRepository.findRandomQuestionsExcludingUserAnswered(
                     user.getId(),
                     limit,
                     language
             );
-            total = questionRepository.countTotalQuestionsExcludingUserAnswered(user.getId(), language);
+            offset = total - questionRepository.countTotalQuestionsExcludingUserAnswered(user.getId(), language);
 
             logQuestionsForUser(user, questions);
         }
-        return new DataMeta<>(questions, new Meta(limit, 0, total));
+        return new DataMeta<>(questions, new Meta(limit, offset, total));
     }
 
     private void logQuestionsForUser(UserEntity user, List<QuestionEntity> questions) {

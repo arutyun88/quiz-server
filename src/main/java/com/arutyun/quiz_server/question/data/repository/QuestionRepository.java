@@ -12,8 +12,9 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
 
     @Query(
             value = """
-                    SELECT * FROM questions
-                    WHERE jsonb_exists(question, :language)
+                    SELECT q.* FROM question q
+                    JOIN question_translation qt ON q.id = qt.question_id
+                    WHERE qt.language = :language
                     ORDER BY RANDOM()
                     LIMIT :limit
                     """,
@@ -26,13 +27,15 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
 
     @Query(
             value = """
-                    SELECT * FROM questions q
-                    WHERE jsonb_exists(q.question, :language)
-                        AND q.id NOT IN (
-                            SELECT l.question_id FROM user_question_logs l
-                            WHERE l.user_id = :user_id
-                        )
-                    ORDER BY RANDOM() LIMIT :limit
+                    SELECT q.* FROM question q
+                    JOIN question_translation qt ON q.id = qt.question_id
+                    WHERE qt.language = :language
+                    AND q.id NOT IN (
+                        SELECT l.question_id FROM user_question_log l
+                        WHERE l.user_id = :user_id
+                    )
+                    ORDER BY RANDOM()
+                    LIMIT :limit
                     """,
             nativeQuery = true
     )
@@ -44,8 +47,9 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
 
     @Query(
             value = """
-                    SELECT COUNT(*) FROM questions
-                    WHERE jsonb_exists(question, :language)
+                    SELECT COUNT(*) FROM question q
+                    JOIN question_translation qt ON q.id = qt.question_id
+                    WHERE qt.language = :language
                     """,
             nativeQuery = true
     )
@@ -55,12 +59,13 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
 
     @Query(
             value = """
-                    SELECT COUNT(*) FROM questions q
-                    WHERE jsonb_exists(q.question, :language)
-                        AND q.id NOT IN (
-                            SELECT l.question_id FROM user_question_logs l
-                            WHERE l.user_id = :user_id
-                        )
+                    SELECT COUNT(*) FROM question q
+                    JOIN question_translation qt ON q.id = qt.question_id
+                    WHERE qt.language = :language
+                    AND q.id NOT IN (
+                        SELECT l.question_id FROM user_question_log l
+                        WHERE l.user_id = :user_id
+                    )
                     """,
             nativeQuery = true
     )
@@ -68,4 +73,5 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, UUID> 
             @Param("user_id") UUID userId,
             @Param("language") String language
     );
+
 }

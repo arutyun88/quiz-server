@@ -46,10 +46,45 @@ CREATE TABLE tokens
     UNIQUE (user_id, device_id)
 );
 
--- Создание таблицы questions
-CREATE TABLE questions
-(
-    id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    correct_answer CHAR(1)      NOT NULL,
-    question       JSONB        NOT NULL
+-- Создание таблицы question
+CREATE TABLE question (
+    id UUID PRIMARY KEY
 );
+
+-- Создание таблицы question_translation
+CREATE TABLE question_translation (
+    id UUID PRIMARY KEY,
+    question_id UUID REFERENCES question(id) ON DELETE CASCADE,
+    language VARCHAR(10) NOT NULL,
+    text TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+-- Создание таблицы answer
+CREATE TABLE answer (
+    id UUID PRIMARY KEY,
+    question_id UUID REFERENCES question(id) ON DELETE CASCADE,
+    is_correct BOOLEAN NOT NULL
+);
+
+-- Создание таблицы answer_translation
+CREATE TABLE answer_translation (
+    id UUID PRIMARY KEY,
+    answer_id UUID REFERENCES answer(id) ON DELETE CASCADE,
+    language VARCHAR(10) NOT NULL,
+    text TEXT NOT NULL
+);
+
+-- Создание таблицы user_question_log
+CREATE TABLE user_question_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    question_id UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+);
+
+-- Создание индекса для ускорения запроса на фильтрацию по user_id и question_id
+CREATE INDEX idx_user_question_log_user_id_question_id
+ON user_question_log (user_id, question_id);
