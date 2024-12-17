@@ -1,0 +1,36 @@
+[
+  {
+    "id": "UUID",
+    "question": "Столица Франции?",
+    "description": "Описание столицы Франции",
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": "Париж"
+      },
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": "Берлин"
+      }
+    ]
+  },
+  {
+    "id": "UUID",
+    "question": "Самая высокая гора в мире?",
+    "description": "Описание самой высокой горы",
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": "K2"
+      },
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": "Эверест"
+      }
+    ]
+  }
+]

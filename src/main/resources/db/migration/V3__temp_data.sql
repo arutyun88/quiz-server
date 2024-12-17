@@ -1,0 +1,60 @@
+---- Вставка данных в один запрос с использованием CTE
+--WITH inserted_question1 AS (
+--    INSERT INTO questions (id) VALUES (gen_random_uuid()) RETURNING id
+--),
+--inserted_question1_translations AS (
+--    INSERT INTO question_translations (question_id, language, text)
+--    SELECT id, 'ru', 'Столица Франции?' FROM inserted_question1
+--    UNION ALL
+--    SELECT id, 'en', 'What is the capital of France?' FROM inserted_question1
+--),
+--inserted_answer1 AS (
+--    INSERT INTO answers (id, question_id, is_correct)
+--    SELECT gen_random_uuid(), id, true FROM inserted_question1 RETURNING id
+--),
+--inserted_answer1_translations AS (
+--    INSERT INTO answer_translations (answer_id, language, text)
+--    SELECT id, 'ru', 'Париж' FROM inserted_answer1
+--    UNION ALL
+--    SELECT id, 'en', 'Paris' FROM inserted_answer1
+--),
+--inserted_answer2 AS (
+--    INSERT INTO answers (id, question_id, is_correct)
+--    SELECT gen_random_uuid(), id, false FROM inserted_question1 RETURNING id
+--),
+--inserted_answer2_translations AS (
+--    INSERT INTO answer_translations (answer_id, language, text)
+--    SELECT id, 'ru', 'Берлин' FROM inserted_answer2
+--    UNION ALL
+--    SELECT id, 'en', 'Berlin' FROM inserted_answer2
+--),
+--inserted_question2 AS (
+--    INSERT INTO questions (id) VALUES (gen_random_uuid()) RETURNING id
+--),
+--inserted_question2_translations AS (
+--        INSERT INTO question_translations (question_id, language, text)
+--    SELECT id, 'ru', 'Самая высокая гора в мире?' FROM inserted_question2
+--    UNION ALL
+--    SELECT id, 'en', 'What is the highest mountain in the world?' FROM inserted_question2
+--),
+--inserted_answer3 AS (
+--    INSERT INTO answers (id, question_id, is_correct)
+--    SELECT gen_random_uuid(), id, true FROM inserted_question2 RETURNING id
+--),
+--inserted_answer3_translations AS (
+--    INSERT INTO answer_translations (answer_id, language, text)
+--    SELECT id, 'ru', 'Эверест' FROM inserted_answer3
+--        UNION ALL
+--        SELECT id, 'en', 'Everest' FROM inserted_answer3
+--),
+--inserted_answer4 AS (
+--    INSERT INTO answers (id, question_id, is_correct)
+--    SELECT gen_random_uuid(), id, false FROM inserted_question2 RETURNING id
+--),
+--inserted_answer4_translations AS (
+--    INSERT INTO answer_translations (answer_id, language, text)
+--    SELECT id, 'ru', 'Килауэа' FROM inserted_answer4
+--    UNION ALL
+--    SELECT id, 'en', 'Kilauea' FROM inserted_answer4
+--)
+--SELECT 1; -- Финальный SELECT, чтобы запрос выполнился успешно

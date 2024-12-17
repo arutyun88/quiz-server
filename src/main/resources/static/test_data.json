@@ -1,0 +1,108 @@
+[
+  {
+    "id": "UUID",
+    "question": [
+      {
+        "language_code": "en",
+        "text": "What is the capital of France?"
+      },
+      {
+        "language_code": "ru",
+        "text": "Столица Франции?"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en",
+        "text": "Some description of the capital of France"
+      },
+      {
+        "language_code": "ru",
+        "text": "Описание столицы Франции"
+      }
+    ],
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": [
+          {
+            "language_code": "en",
+            "text": "Paris"
+          },
+          {
+            "language_code": "ru",
+            "text": "Париж"
+          }
+        ]
+      },
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": [
+          {
+            "language_code": "en",
+            "text": "Berlin"
+          },
+          {
+            "language_code": "ru",
+            "text": "Берлин"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "UUID",
+    "question": [
+      {
+        "language_code": "en",
+        "text": "What is the highest mountain in the world?"
+      },
+      {
+        "language_code": "ru",
+        "text": "Самая высокая гора в мире?"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en",
+        "text": "Some description of the highest mountain"
+      },
+      {
+        "language_code": "ru",
+        "text": "Описание самой высокой горы"
+      }
+    ],
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": [
+          {
+            "language_code": "en",
+            "text": "K2"
+          },
+          {
+            "language_code": "ru",
+            "text": "K2"
+          }
+        ]
+      },
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": [
+          {
+            "language_code": "en",
+            "text": "Everest"
+          },
+          {
+            "language_code": "ru",
+            "text": "Эверест"
+          }
+        ]
+      }
+    ]
+  }
+]

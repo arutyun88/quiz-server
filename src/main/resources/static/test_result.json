@@ -1,0 +1,76 @@
+[
+  {
+    "id": "UUID",
+    "question": [
+      {
+        "language_code": "ru",
+        "text": "Столица Франции?"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "ru",
+        "text": "Описание столицы Франции"
+      }
+    ],
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": [
+          {
+            "language_code": "ru",
+            "text": "Париж"
+          }
+        ]
+      },
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": [
+          {
+            "language_code": "ru",
+            "text": "Берлин"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "UUID",
+    "question": [
+      {
+        "language_code": "ru",
+        "text": "Самая высокая гора в мире?"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "ru",
+        "text": "Описание самой высокой горы"
+      }
+    ],
+    "answers": [
+      {
+        "id": "UUID",
+        "is_correct": false,
+        "answer": [
+          {
+            "language_code": "ru",
+            "text": "K2"
+          }
+        ]
+      },
+      {
+        "id": "UUID",
+        "is_correct": true,
+        "answer": [
+          {
+            "language_code": "ru",
+            "text": "Эверест"
+          }
+        ]
+      }
+    ]
+  }
+]
