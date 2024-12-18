@@ -71,8 +71,8 @@ CREATE TABLE tokens
 -- Создание таблицы question
 CREATE TABLE question (
     id UUID PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 CREATE TRIGGER trigger_prevent_update_created_at
@@ -92,8 +92,8 @@ CREATE TABLE question_translation (
     language VARCHAR(10) NOT NULL,
     text TEXT NOT NULL,
     description TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 CREATE TRIGGER trigger_prevent_update_created_at
@@ -111,8 +111,8 @@ CREATE TABLE answer (
     id UUID PRIMARY KEY,
     question_id UUID REFERENCES question(id) ON DELETE CASCADE,
     is_correct BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 CREATE TRIGGER trigger_prevent_update_created_at
@@ -131,8 +131,8 @@ CREATE TABLE answer_translation (
     answer_id UUID REFERENCES answer(id) ON DELETE CASCADE,
     language VARCHAR(10) NOT NULL,
     text TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 CREATE TRIGGER trigger_prevent_update_created_at
@@ -152,8 +152,8 @@ CREATE TABLE user_question_log (
     question_id UUID NOT NULL,
     answer_id UUID,
     is_correct BOOLEAN,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
     FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE SET NULL,
@@ -165,8 +165,8 @@ BEFORE UPDATE ON user_question_log
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
 
-CREATE TRIGGER trigger_update_answer_translation
-BEFORE UPDATE ON answer_translation
+CREATE TRIGGER trigger_update_user_question_log
+BEFORE UPDATE ON user_question_log
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
