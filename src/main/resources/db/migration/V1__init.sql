@@ -154,6 +154,7 @@ CREATE TABLE user_question_log (
     updated_at TIMESTAMP DEFAULT NULL
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+    CONSTRAINT unique_user_question UNIQUE (user_id, question_id)
 );
 
 CREATE TRIGGER trigger_prevent_update_created_at
