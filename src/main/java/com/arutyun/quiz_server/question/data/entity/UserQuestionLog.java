@@ -38,6 +38,13 @@ public class UserQuestionLog {
     @JoinColumn(name = "question_id", nullable = false)
     private QuestionEntity question;
 
+    @ManyToOne
+    @JoinColumn(name = "answer_id")
+    private AnswerEntity answer;
+
+    @Column(name = "is_correct")
+    private Boolean isCorrect;
+
     public UserQuestionLog(
             UserEntity user,
             QuestionEntity question
