@@ -151,6 +151,7 @@ CREATE TABLE user_question_log (
     user_id UUID NOT NULL,
     question_id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 );
@@ -159,6 +160,11 @@ CREATE TRIGGER trigger_prevent_update_created_at
 BEFORE UPDATE ON user_question_log
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_answer_translation
+BEFORE UPDATE ON answer_translation
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
 
 -- Создание индекса для ускорения запроса на фильтрацию по user_id и question_id
 CREATE INDEX idx_user_question_log_user_id_question_id
