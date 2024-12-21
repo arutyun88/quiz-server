@@ -75,4 +75,12 @@ public class AuthController {
 
         return ResponseWrapper.ok(newToken, tokenDtoConverter);
     }
+
+    @PostMapping("/api/auth/logout")
+    public ResponseEntity<ResponseDto> logout(
+            @RequestHeader("Authorization") String token
+    ) {
+        authService.logoutUserByToken(token);
+        return ResponseWrapper.ok(token, value -> value);
+    }
 }

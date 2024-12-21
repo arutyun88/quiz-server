@@ -27,7 +27,7 @@ public class JwtService {
     @Value("${jwt.refresh-expiration-in-ms}")
     private long REFRESH_TOKEN_VALIDITY;
 
-    private final static String TOKEN_TYPE = "Bearer ";
+    private static final String TOKEN_TYPE = "Bearer ";
 
     public String parseTokenByType(String token) {
         if (token != null && token.startsWith(TOKEN_TYPE)) {
@@ -44,7 +44,7 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
+                        .toList());
         claims.put("token_type", "access_token");
         return generateToken(claims, userDetails, ACCESS_TOKEN_VALIDITY);
     }

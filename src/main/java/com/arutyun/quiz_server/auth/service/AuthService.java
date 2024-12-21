@@ -8,4 +8,6 @@ public interface AuthService {
     TokenEntity generateToken(UserEntity user, String deviceId) throws BaseException;
 
     TokenEntity fetchTokenByRefresh(String deviceId, String token) throws BaseException;
+
+    void logoutUserByToken(String token);
 }
