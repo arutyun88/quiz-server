@@ -27,8 +27,20 @@ $$ LANGUAGE plpgsql;
 CREATE TABLE roles
 (
     id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(50) UNIQUE NOT NULL
+    name VARCHAR(50) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
+
+CREATE TRIGGER trigger_create_roles
+BEFORE UPDATE ON roles
+FOR EACH ROW
+EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_roles
+BEFORE UPDATE ON roles
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
 
 -- Добавление роли "Owner"
 INSERT INTO roles (name)
@@ -43,8 +55,20 @@ CREATE TABLE users
     id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(50) UNIQUE  NOT NULL,
     password VARCHAR(255)        NOT NULL,
-    email    VARCHAR(255) UNIQUE NOT NULL
+    email    VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
+
+CREATE TRIGGER trigger_create_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
 
 -- Создание промежуточной таблицы user_roles для связи пользователей и ролей
 CREATE TABLE user_roles
@@ -65,8 +89,20 @@ CREATE TABLE tokens
     user_id       UUID         NOT NULL,
     device_id     VARCHAR(100) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    UNIQUE (user_id, device_id)
+    UNIQUE (user_id, device_id),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
+
+CREATE TRIGGER trigger_create_tokens
+BEFORE UPDATE ON tokens
+FOR EACH ROW
+EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_tokens
+BEFORE UPDATE ON tokens
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
 
 -- Создание таблицы question
 CREATE TABLE question (
