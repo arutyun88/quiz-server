@@ -90,19 +90,13 @@ CREATE TABLE tokens
     device_id     VARCHAR(100) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     UNIQUE (user_id, device_id),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TRIGGER trigger_create_tokens
 BEFORE UPDATE ON tokens
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
-
-CREATE TRIGGER trigger_update_tokens
-BEFORE UPDATE ON tokens
-FOR EACH ROW
-EXECUTE FUNCTION set_updated_at();
 
 -- Создание таблицы question
 CREATE TABLE question (
