@@ -16,8 +16,6 @@ import org.hibernate.HibernateException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -65,11 +63,12 @@ public class AuthServiceImpl implements AuthService {
         return token;
     }
 
-    public void logoutUserByToken(String token) {
-        final Optional<TokenEntity> storedToken = tokenRepository.findByAccessToken(jwtService.parseTokenByType(token));
-        storedToken.ifPresent(presentedToken -> {
-            tokenRepository.delete(presentedToken);
-            SecurityContextHolder.clearContext();
-        });
+    public void logoutUserByToken(String token) throws BaseUnauthorizedException {
+        final TokenEntity storedToken = tokenRepository
+                .findByAccessToken(jwtService.parseTokenByType(token))
+                .orElseThrow(() -> new TokenNotFoundException("User already unauthorized"));
+
+        tokenRepository.delete(storedToken);
+        SecurityContextHolder.clearContext();
     }
 }

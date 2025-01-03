@@ -9,5 +9,5 @@ public interface AuthService {
 
     TokenEntity fetchTokenByRefresh(String deviceId, String token) throws BaseException;
 
-    void logoutUserByToken(String token);
+    void logoutUserByToken(String token) throws BaseException;
 }

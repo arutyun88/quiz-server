@@ -79,8 +79,8 @@ public class AuthController {
     @PostMapping("/api/auth/logout")
     public ResponseEntity<ResponseDto> logout(
             @RequestHeader("Authorization") String token
-    ) {
+    ) throws BaseException {
         authService.logoutUserByToken(token);
-        return ResponseWrapper.ok(token, value -> value);
+        return ResponseWrapper.ok(token, value -> "The user was unauthorized");
     }
 }
