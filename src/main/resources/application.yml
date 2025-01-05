@@ -4,7 +4,7 @@ logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: ERROR
 jwt:
   secret-key: ${JWT_SECRET_KEY:89JZa4FRE7YEelJdnQC/6gYzZZPdEZOizIHJMaDEPNU=}
   access-expiration-in-ms: 3600000
