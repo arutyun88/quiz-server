@@ -4,6 +4,7 @@ import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
@@ -40,9 +41,11 @@ public class UserQuestionLog {
 
     @ManyToOne
     @JoinColumn(name = "answer_id")
+    @Setter
     private AnswerEntity answer;
 
     @Column(name = "is_correct")
+    @Setter
     private Boolean isCorrect;
 
     public UserQuestionLog(
