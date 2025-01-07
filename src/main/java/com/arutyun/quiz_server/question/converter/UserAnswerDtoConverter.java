@@ -1,18 +1,18 @@
 package com.arutyun.quiz_server.question.converter;
 
 import com.arutyun.quiz_server.common.dto.converter.DtoConverter;
-import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;
 import com.arutyun.quiz_server.question.dto.ResponseUserAnswerDto;
+import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserAnswerDtoConverter implements DtoConverter<ResponseUserAnswerDto, UserQuestionLog> {
+public class UserAnswerDtoConverter implements DtoConverter<ResponseUserAnswerDto, UserAnswersStatistic> {
     @Override
-    public ResponseUserAnswerDto convert(UserQuestionLog data) {
+    public ResponseUserAnswerDto convert(UserAnswersStatistic data) {
         return new ResponseUserAnswerDto(
-                data.getQuestion().getId(),
-                data.getAnswer().getId(),
-                data.getIsCorrect()
+                data.rightCount(),
+                data.wrongCount(),
+                data.lastIsRight()
         );
     }
 }

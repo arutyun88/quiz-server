@@ -13,6 +13,7 @@ import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;
 import com.arutyun.quiz_server.question.dto.RequestUserAnswerDto;
 import com.arutyun.quiz_server.question.service.AnswerService;
 import com.arutyun.quiz_server.question.service.QuestionService;
+import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -52,13 +53,13 @@ public class QuestionController {
             @Valid @RequestBody RequestUserAnswerDto answer
     ) throws BaseException {
         final UserEntity user = userService.getCurrentUser();
-        final UserQuestionLog userAnswer = answerService.saveUserAnswer(
+        final UserAnswersStatistic userAnswersStatistic = answerService.saveUserAnswer(
                 user,
                 answer.id(),
                 answer.answer()
         );
         return ResponseWrapper.ok(
-                userAnswer,
+                userAnswersStatistic,
                 userAnswerDtoConverter
         );
     }

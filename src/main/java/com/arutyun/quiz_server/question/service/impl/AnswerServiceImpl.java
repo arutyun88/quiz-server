@@ -3,68 +3,61 @@ package com.arutyun.quiz_server.question.service.impl;
 import com.arutyun.quiz_server.auth.data.entity.UserEntity;
 import com.arutyun.quiz_server.common.exception.BaseException;
 import com.arutyun.quiz_server.question.data.entity.AnswerEntity;
-import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
 import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;
 import com.arutyun.quiz_server.question.data.repository.AnswerRepository;
-import com.arutyun.quiz_server.question.data.repository.QuestionRepository;
 import com.arutyun.quiz_server.question.data.repository.UserQuestionLogRepository;
 import com.arutyun.quiz_server.question.exception.AnswerConflictException;
 import com.arutyun.quiz_server.question.exception.AnswerSavingException;
 import com.arutyun.quiz_server.question.service.AnswerService;
+import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AnswerServiceImpl implements AnswerService {
     final AnswerRepository answerRepository;
-    final QuestionRepository questionRepository;
     final UserQuestionLogRepository questionLogRepository;
 
     @Override
-    public UserQuestionLog saveUserAnswer(
+    public UserAnswersStatistic saveUserAnswer(
             UserEntity user,
             UUID questionId,
             UUID answerId
     ) throws BaseException {
-        final AnswerEntity answer = answerRepository.findById(answerId).orElseThrow(
-                () -> new AnswerSavingException(String.format("Answer %s not found", answerId))
-        );
+        final AnswerEntity answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new AnswerSavingException(String.format("Answer %s not found", answerId)));
 
-        final QuestionEntity question = questionRepository.findById(questionId).orElseThrow(
-                () -> new AnswerSavingException(String.format("Question %s not found", questionId))
-        );
-
-        if(user == null) {
-            final UserQuestionLog questionLog = new UserQuestionLog(user, question);
-            questionLog.setAnswer(answer);
-            questionLog.setIsCorrect(answer.isCorrect());
-            return questionLog;
+        if (user == null) {
+            return new UserAnswersStatistic(0, 0, answer.isCorrect());
         }
 
-        final Optional<UserQuestionLog> questionLog = questionLogRepository.findByUserIdAndQuestionId(
+        final UserQuestionLog questionLog = questionLogRepository.findByUserIdAndQuestionId(
                 user.getId(),
                 questionId
+        ).orElseThrow(
+                () -> new AnswerSavingException(
+                        String.format("Answer %s from question %s not saved", answerId, questionId)
+                )
         );
 
-        if (questionLog.isPresent()) {
-            if(questionLog.get().getAnswer() != null) {
-                throw new AnswerConflictException(
-                        String.format(
-                                "Question %s from question %s already answered",
-                                answerId,
-                                questionId
-                        )
-                );
-            }
-            questionLog.get().setAnswer(answer);
-            questionLog.get().setIsCorrect(answer.isCorrect());
-            return questionLogRepository.save(questionLog.get());
+        if (questionLog.getAnswer() != null) {
+            throw new AnswerConflictException(
+                    String.format("Question %s from question %s already answered", answerId, questionId)
+            );
         }
 
-        throw new AnswerSavingException(String.format("Answer %s from question %s not saved", answerId, questionId));
+        questionLog.setAnswer(answer);
+        questionLog.setIsCorrect(answer.isCorrect());
+        questionLogRepository.save(questionLog);
+
+        final List<UserQuestionLog> allUserAnswers = questionLogRepository.findAllFromUser(user.getId());
+        long correctAnswers = allUserAnswers.stream().filter(UserQuestionLog::getIsCorrect).count();
+        long incorrectAnswers = allUserAnswers.size() - correctAnswers;
+
+        return new UserAnswersStatistic((int) correctAnswers, (int) incorrectAnswers, answer.isCorrect());
     }
 }
