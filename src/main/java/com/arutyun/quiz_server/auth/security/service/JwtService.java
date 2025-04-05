@@ -36,7 +36,7 @@ public class JwtService {
         return null;
     }
 
-    public String extractUsername(String token) throws UserUnauthorizedException {
+    public String extractEmail(String token) throws UserUnauthorizedException {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -72,12 +72,12 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) throws UserUnauthorizedException {
-        final String username = extractUsername(token);
+        final String email = extractEmail(token);
         final boolean isAccessToken = extractClaim(
                 token,
                 claims -> claims.get("token_type").toString().equals("access_token")
         );
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isAccessToken;
+        return email.equals(userDetails.getUsername()) && !isTokenExpired(token) && isAccessToken;
     }
 
     public boolean isTokenExpired(String token) throws UserUnauthorizedException {

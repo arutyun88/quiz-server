@@ -30,20 +30,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity findUser(
-            String username,
+            String email,
             String password
     ) throws UsernameOrPasswordInvalidException {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
 
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameOrPasswordInvalidException("Invalid username or password"));
     }
 
     @Override
     public UserEntity createUser(
-            String username,
             String password,
             String email
     ) throws UserAlreadyExistException, UserCreateUnknownException {
@@ -55,9 +54,8 @@ public class UserServiceImpl implements UserService {
 
             return userRepository.save(
                     new UserEntity(
-                            username,
-                            passwordEncoder.encode(password),
                             email,
+                            passwordEncoder.encode(password),
                             new HashSet<>(Collections.singleton(roleData.get()))
                     )
             );

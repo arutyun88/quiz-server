@@ -30,7 +30,7 @@ public class AuthController {
             @Valid @RequestBody RequestLoginDto request
     ) throws BaseException {
         final UserEntity user = userService.findUser(
-                request.username(),
+                request.email(),
                 request.password()
         );
 
@@ -48,7 +48,6 @@ public class AuthController {
             @Valid @RequestBody RequestRegisterDto request
     ) throws BaseException {
         final UserEntity user = userService.createUser(
-                request.username(),
                 request.password(),
                 request.email()
         );

@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public record UserDto(
         @JsonProperty("id") UUID id,
-        @JsonProperty("username") String username
+        @JsonProperty("email") String email
 ) {
 }

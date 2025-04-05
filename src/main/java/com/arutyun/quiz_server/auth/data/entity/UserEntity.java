@@ -21,9 +21,6 @@ public class UserEntity implements UserDetails {
     @Column(updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private String username;
-
     @Column(nullable = false)
     private String password;
 
@@ -39,12 +36,10 @@ public class UserEntity implements UserDetails {
     private final Set<RoleEntity> roles = new HashSet<>();
 
     public UserEntity(
-            String username,
-            String password,
             String email,
+            String password,
             Set<RoleEntity> roles
     ) {
-        this.username = username;
         this.password = password;
         this.email = email;
         this.roles.addAll(roles);
@@ -53,6 +48,11 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override
