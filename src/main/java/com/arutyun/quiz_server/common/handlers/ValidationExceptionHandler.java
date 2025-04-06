@@ -2,10 +2,11 @@ package com.arutyun.quiz_server.common.handlers;
 
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
 import com.arutyun.quiz_server.common.dto.response.ResponseWrapper;
-import com.arutyun.quiz_server.common.exception.impl.CommonBadRequestException;
+import com.arutyun.quiz_server.common.exception.impl.BadRequestException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -27,7 +28,7 @@ public class ValidationExceptionHandler {
         }
 
         return ResponseWrapper.error(
-                new CommonBadRequestException(
+                new BadRequestException(
                         errors.delete(errors.length() - 2, errors.length()).toString()
                 )
         );
@@ -45,7 +46,7 @@ public class ValidationExceptionHandler {
         }
 
         return ResponseWrapper.error(
-                new CommonBadRequestException(
+                new BadRequestException(
                         errors.delete(errors.length() - 2, errors.length()).toString()
                 )
         );
@@ -57,8 +58,17 @@ public class ValidationExceptionHandler {
         String errors = String.format("%s - %s", ex.getHeaderName(), ex.getMessage());
 
         return ResponseWrapper.error(
-                new CommonBadRequestException(
+                new BadRequestException(
                         errors
+                )
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseDto> handleValidationExceptions(HttpMessageNotReadableException ex) {
+        return ResponseWrapper.error(
+                new BadRequestException(
+                        ex.getMessage().split(":")[0]
                 )
         );
     }

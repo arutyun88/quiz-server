@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/api/auth/login")
     public ResponseEntity<ResponseDto> authenticate(
-            @RequestHeader("device_id") String deviceId,
+            @RequestHeader("X-Device-ID") String deviceId,
             @Valid @RequestBody RequestLoginDto request
     ) throws BaseException {
         final UserEntity user = userService.findUser(
@@ -44,7 +44,7 @@ public class AuthController {
 
     @PostMapping("/api/auth/register")
     public ResponseEntity<ResponseDto> register(
-            @RequestHeader("device_id") String deviceId,
+            @RequestHeader("X-Device-ID") String deviceId,
             @Valid @RequestBody RequestRegisterDto request
     ) throws BaseException {
         final UserEntity user = userService.createUser(
@@ -62,7 +62,7 @@ public class AuthController {
 
     @PostMapping("/api/auth/refresh")
     public ResponseEntity<ResponseDto> refresh(
-            @RequestHeader("device_id") String deviceId,
+            @RequestHeader("X-Device-ID") String deviceId,
             @RequestParam String token
     ) throws BaseException {
         final TokenEntity oldToken = authService.fetchTokenByRefresh(deviceId, token);
