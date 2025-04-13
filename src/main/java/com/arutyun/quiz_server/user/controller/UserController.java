@@ -1,6 +1,7 @@
 package com.arutyun.quiz_server.user.controller;
 
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.dto.UpdateUserRequestDto;
 import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
 import com.arutyun.quiz_server.common.dto.response.ResponseWrapper;
@@ -33,5 +34,17 @@ public class UserController {
         final UserEntity user = userService.getCurrentUser();
 
         return ResponseWrapper.ok(user, userDtoConverter);
+    }
+
+    @PostMapping("api/user")
+    public ResponseEntity<ResponseDto> updateUser(
+            @RequestBody UpdateUserRequestDto request
+    ) throws BaseException {
+        final UserEntity user = userService.updateCurrentUser(
+                request.name(),
+                request.birthDate()
+        );
+
+        return  ResponseWrapper.ok(user, userDtoConverter);
     }
 }

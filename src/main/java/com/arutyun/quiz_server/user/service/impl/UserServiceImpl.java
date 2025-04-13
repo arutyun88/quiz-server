@@ -16,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity getCurrentUser()  throws UserNotFoundException {
+    public UserEntity getCurrentUser() throws UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated()) {
             final Object principal = authentication.getPrincipal();
@@ -95,5 +97,24 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserById(UUID id) throws UserNotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", id)));
+    }
+
+    @Override
+    @Transactional
+    public UserEntity updateCurrentUser(
+            String name,
+            LocalDate birthDate
+    ) throws UserNotFoundException {
+        final UserEntity user = getCurrentUser();
+
+        if (name != null) {
+            user.setName(name);
+        }
+
+        if (birthDate != null) {
+            user.setBirthDate(birthDate);
+        }
+
+        return userRepository.save(user);
     }
 }
