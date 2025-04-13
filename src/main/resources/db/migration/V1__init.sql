@@ -55,6 +55,8 @@ CREATE TABLE users
     id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     password VARCHAR(255)        NOT NULL,
     email    VARCHAR(255) UNIQUE NOT NULL,
+    name       VARCHAR(255),
+    birth_date DATE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );

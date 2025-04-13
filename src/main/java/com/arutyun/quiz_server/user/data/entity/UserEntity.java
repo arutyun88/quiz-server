@@ -3,10 +3,12 @@ package com.arutyun.quiz_server.user.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -27,6 +29,14 @@ public class UserEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column
+    @Setter
+    private String name;
+
+    @Column(name = "birth_date")
+    @Setter
+    private LocalDate birthDate;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -42,6 +52,20 @@ public class UserEntity implements UserDetails {
     ) {
         this.password = password;
         this.email = email;
+        this.roles.addAll(roles);
+    }
+
+    public UserEntity(
+            String email,
+            String password,
+            String name,
+            LocalDate birthDate,
+            Set<RoleEntity> roles
+    ) {
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.birthDate = birthDate;
         this.roles.addAll(roles);
     }
 

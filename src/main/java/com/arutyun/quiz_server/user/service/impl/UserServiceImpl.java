@@ -1,7 +1,7 @@
 package com.arutyun.quiz_server.user.service.impl;
 
 import com.arutyun.quiz_server.user.data.entity.RoleEntity;
-import com.arutyun.quiz_server.user.data.repository.RoleRepository;
+import com.arutyun.quiz_server.auth.data.repository.RoleRepository;
 import com.arutyun.quiz_server.auth.exception.*;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.data.repository.UserRepository;

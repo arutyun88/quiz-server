@@ -11,7 +11,9 @@ public class UserDtoConverter implements DtoConverter<UserDto, UserEntity> {
     public UserDto convert(UserEntity data) {
         return new UserDto(
                 data.getId(),
-                data.getEmail()
+                data.getEmail(),
+                data.getName(),
+                data.getBirthDate()
         );
     }
 }
