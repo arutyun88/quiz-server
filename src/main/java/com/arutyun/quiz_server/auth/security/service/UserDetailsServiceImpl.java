@@ -1,6 +1,6 @@
 package com.arutyun.quiz_server.auth.security.service;
 
-import com.arutyun.quiz_server.auth.data.repository.UserRepository;
+import com.arutyun.quiz_server.user.data.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

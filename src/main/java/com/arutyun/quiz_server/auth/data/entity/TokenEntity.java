@@ -1,5 +1,6 @@
 package com.arutyun.quiz_server.auth.data.entity;
 
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,11 +1,12 @@
-package com.arutyun.quiz_server.auth.service.impl;
+package com.arutyun.quiz_server.user.service.impl;
 
-import com.arutyun.quiz_server.auth.data.entity.RoleEntity;
-import com.arutyun.quiz_server.auth.data.repository.RoleRepository;
+import com.arutyun.quiz_server.user.data.entity.RoleEntity;
+import com.arutyun.quiz_server.user.data.repository.RoleRepository;
 import com.arutyun.quiz_server.auth.exception.*;
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
-import com.arutyun.quiz_server.auth.data.repository.UserRepository;
-import com.arutyun.quiz_server.auth.service.UserService;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.data.repository.UserRepository;
+import com.arutyun.quiz_server.user.service.UserService;
+import com.arutyun.quiz_server.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity getCurrentUser() {
+    public UserEntity getCurrentUser()  throws UserNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated()) {
             final Object principal = authentication.getPrincipal();
@@ -85,6 +87,13 @@ public class UserServiceImpl implements UserService {
                 return user;
             }
         }
-        return null;
+
+        throw new UserNotFoundException("User %s not found");
+    }
+
+    @Override
+    public UserEntity getUserById(UUID id) throws UserNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", id)));
     }
 }

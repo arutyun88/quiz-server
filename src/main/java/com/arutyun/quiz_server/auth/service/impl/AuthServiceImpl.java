@@ -7,7 +7,7 @@ import com.arutyun.quiz_server.auth.exception.UserUnauthorizedException;
 import com.arutyun.quiz_server.auth.security.service.JwtService;
 import com.arutyun.quiz_server.auth.service.AuthService;
 import com.arutyun.quiz_server.common.exception.BaseException;
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.auth.exception.UserTokenCreateException;
 import com.arutyun.quiz_server.common.exception.BaseUnauthorizedException;
 import jakarta.transaction.Transactional;

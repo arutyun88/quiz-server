@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "roles")
 @NoArgsConstructor
 @Getter
-public class PublicUserEntity {
+public class RoleEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue
@@ -20,5 +21,10 @@ public class PublicUserEntity {
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private String email;
+    private String name;
+
+    @Override
+    public String getAuthority() {
+        return name;
+    }
 }

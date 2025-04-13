@@ -1,6 +1,6 @@
 package com.arutyun.quiz_server.auth.data.repository;
 
-import com.arutyun.quiz_server.auth.data.entity.RoleEntity;
+import com.arutyun.quiz_server.user.data.entity.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

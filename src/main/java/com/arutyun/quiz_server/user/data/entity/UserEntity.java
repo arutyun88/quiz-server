@@ -1,4 +1,4 @@
-package com.arutyun.quiz_server.auth.data.entity;
+package com.arutyun.quiz_server.user.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

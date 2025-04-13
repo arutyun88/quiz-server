@@ -1,7 +1,10 @@
-package com.arutyun.quiz_server.auth.service;
+package com.arutyun.quiz_server.user.service;
 
 import com.arutyun.quiz_server.auth.exception.*;
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.exception.UserNotFoundException;
+
+import java.util.UUID;
 
 public interface UserService {
     UserEntity findUser(
@@ -14,5 +17,7 @@ public interface UserService {
             String email
     ) throws UserAlreadyExistException, UserCreateUnknownException;
 
-    UserEntity getCurrentUser();
+    UserEntity getCurrentUser() throws UserNotFoundException;
+
+    UserEntity getUserById(UUID id) throws UserNotFoundException;
 }
