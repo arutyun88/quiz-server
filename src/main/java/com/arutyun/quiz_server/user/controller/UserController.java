@@ -1,6 +1,7 @@
 package com.arutyun.quiz_server.user.controller;
 
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.dto.UpdatePasswordRequestDto;
 import com.arutyun.quiz_server.user.dto.UpdateUserRequestDto;
 import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
@@ -46,5 +47,17 @@ public class UserController {
         );
 
         return  ResponseWrapper.ok(user, userDtoConverter);
+    }
+
+    @PostMapping("api/user/password")
+    public ResponseEntity<ResponseDto> updatePassword(
+            @RequestBody UpdatePasswordRequestDto request
+    ) throws BaseException {
+        userService.updatePassword(
+                request.oldPassword(),
+                request.newPassword()
+        );
+
+        return  ResponseWrapper.ok();
     }
 }

@@ -24,6 +24,7 @@ public class UserEntity implements UserDetails {
     private UUID id;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @Column(unique = true, nullable = false)

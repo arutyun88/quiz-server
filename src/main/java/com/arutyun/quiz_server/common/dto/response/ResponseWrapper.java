@@ -12,6 +12,10 @@ public abstract class ResponseWrapper {
         throw new IllegalStateException("ResponseWrapper is utility class");
     }
 
+    public static ResponseEntity<ResponseDto> ok() {
+        return ResponseEntity.ok(ResponseSuccessDto.of());
+    }
+
     public static <T, D> ResponseEntity<ResponseDto> ok(
             D data,
             DtoConverter<T, D> converter

@@ -5,6 +5,7 @@ import com.arutyun.quiz_server.auth.data.repository.RoleRepository;
 import com.arutyun.quiz_server.auth.exception.*;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.data.repository.UserRepository;
+import com.arutyun.quiz_server.user.exception.UserUpdateException;
 import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -116,5 +114,21 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public void updatePassword(
+            String oldPassword,
+            String newPassword
+    ) throws UserNotFoundException, UserUpdateException {
+        final UserEntity user = getCurrentUser();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new UserUpdateException("Password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
     }
 }
