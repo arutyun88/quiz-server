@@ -11,10 +11,6 @@ public class ResponseSuccessDto<T> implements ResponseDto {
     private T data;
     private ResponseMetaDto meta;
 
-    public static <T> ResponseSuccessDto<T> of() {
-        return new ResponseSuccessDto<>(null, null);
-    }
-
     public static <T> ResponseSuccessDto<T> of(T data) {
         return new ResponseSuccessDto<>(data, null);
     }

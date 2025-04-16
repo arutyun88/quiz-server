@@ -58,6 +58,6 @@ public class UserController {
                 request.newPassword()
         );
 
-        return  ResponseWrapper.ok();
+        return  ResponseWrapper.ok("", value -> "Password changed");
     }
 }
