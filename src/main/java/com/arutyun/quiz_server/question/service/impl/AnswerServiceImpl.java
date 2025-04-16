@@ -1,6 +1,6 @@
 package com.arutyun.quiz_server.question.service.impl;
 
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.common.exception.BaseException;
 import com.arutyun.quiz_server.question.data.entity.AnswerEntity;
 import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;

@@ -1,6 +1,6 @@
 package com.arutyun.quiz_server.question.service;
 
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.common.model.DataMeta;
 import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
 

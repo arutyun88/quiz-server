@@ -1,7 +1,7 @@
 package com.arutyun.quiz_server.question.controller;
 
-import com.arutyun.quiz_server.auth.data.entity.UserEntity;
-import com.arutyun.quiz_server.auth.service.UserService;
+import com.arutyun.quiz_server.user.data.entity.UserEntity;
+import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
 import com.arutyun.quiz_server.common.dto.response.ResponseWrapper;
 import com.arutyun.quiz_server.common.exception.BaseException;
@@ -9,11 +9,11 @@ import com.arutyun.quiz_server.common.model.DataMeta;
 import com.arutyun.quiz_server.question.converter.QuestionDtoConverter;
 import com.arutyun.quiz_server.question.converter.UserAnswerDtoConverter;
 import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
-import com.arutyun.quiz_server.question.data.entity.UserQuestionLog;
 import com.arutyun.quiz_server.question.dto.RequestUserAnswerDto;
 import com.arutyun.quiz_server.question.service.AnswerService;
 import com.arutyun.quiz_server.question.service.QuestionService;
 import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
+import com.arutyun.quiz_server.user.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,7 +38,7 @@ public class QuestionController {
             @Max(value = 50, message = "X-Limit cannot exceed 50")
             @RequestHeader(value = "X-Limit", required = false, defaultValue = "1") int limit,
             @RequestHeader(value = "X-Lang") String language
-    ) {
+    ) throws UserNotFoundException {
         final UserEntity user = userService.getCurrentUser();
         DataMeta<QuestionEntity> result = questionService.getRandomQuestions(user, limit, language);
         return ResponseWrapper.ok(
