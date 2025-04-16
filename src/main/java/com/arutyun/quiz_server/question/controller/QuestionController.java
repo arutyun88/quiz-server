@@ -38,8 +38,13 @@ public class QuestionController {
             @Max(value = 50, message = "X-Limit cannot exceed 50")
             @RequestHeader(value = "X-Limit", required = false, defaultValue = "1") int limit,
             @RequestHeader(value = "X-Lang") String language
-    ) throws UserNotFoundException {
-        final UserEntity user = userService.getCurrentUser();
+    ) {
+        UserEntity user = null;
+        try {
+            user = userService.getCurrentUser();
+        } catch (UserNotFoundException ignored) {
+        }
+
         DataMeta<QuestionEntity> result = questionService.getRandomQuestions(user, limit, language);
         return ResponseWrapper.ok(
                 result.getData(),
