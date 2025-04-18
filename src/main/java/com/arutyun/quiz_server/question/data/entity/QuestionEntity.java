@@ -22,6 +22,10 @@ public class QuestionEntity {
     @Column(updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "topic_id")
+    private TopicEntity topic;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Column(name = "translations", nullable = false)
     private List<QuestionTranslation> translations;

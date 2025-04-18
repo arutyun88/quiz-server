@@ -9,6 +9,8 @@ public record ResponseQuestionDto(
         @JsonProperty("id") UUID id,
         @JsonProperty("question") String question,
         @JsonProperty("description") String description,
+        @JsonProperty("topic") ResponseTopicDto topic,
+        @JsonProperty("hint") String hint,
         @JsonProperty("answers") List<ResponseAnswerDto> answers
 ) {
 }

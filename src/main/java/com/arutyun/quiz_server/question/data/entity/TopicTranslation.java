@@ -1,33 +1,29 @@
 package com.arutyun.quiz_server.question.data.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "question_translation")
+@Table(name = "topic_translation")
 @NoArgsConstructor
 @Getter
-public class QuestionTranslation {
+public class TopicTranslation {
     @Id
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "question_id")
-    private QuestionEntity question;
+    @JoinColumn(name = "topic_id")
+    private TopicEntity topic;
 
     @Column(name = "language", nullable = false, length = 2)
     private String language;
 
-    @Column(name = "text", nullable = false)
-    private String text;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
-
-    @Column(name = "hint", nullable = false)
-    private String hint;
 }

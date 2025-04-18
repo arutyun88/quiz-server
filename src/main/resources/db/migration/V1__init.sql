@@ -48,7 +48,6 @@ VALUES ('ROLE_ADMIN');
 INSERT INTO roles (name)
 VALUES ('ROLE_USER');
 
-
 -- Создание таблицы users
 CREATE TABLE users
 (
@@ -99,14 +98,54 @@ BEFORE UPDATE ON tokens
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
 
--- Создание таблицы question
-CREATE TABLE question (
-    id UUID PRIMARY KEY,
+-- Создание таблицы topic (тема)
+CREATE TABLE topic (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
-CREATE TRIGGER trigger_prevent_update_created_at
+CREATE TRIGGER trigger_create_topic
+BEFORE UPDATE ON topic
+FOR EACH ROW
+EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_topic
+BEFORE UPDATE ON topic
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+-- Создание таблицы topic_translation для поддержки мультиязычности тем
+CREATE TABLE topic_translation (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    topic_id UUID NOT NULL REFERENCES topic(id) ON DELETE CASCADE,
+    language VARCHAR(10) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    CONSTRAINT unique_topic_language UNIQUE (topic_id, language)
+);
+
+CREATE TRIGGER trigger_create_topic_translation
+BEFORE UPDATE ON topic_translation
+FOR EACH ROW
+EXECUTE FUNCTION prevent_update_created_at();
+
+CREATE TRIGGER trigger_update_topic_translation
+BEFORE UPDATE ON topic_translation
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+-- Создание таблицы question
+CREATE TABLE question (
+    id UUID PRIMARY KEY,
+    topic_id UUID REFERENCES topic(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
+);
+
+CREATE TRIGGER trigger_prevent_update_created_at_question
 BEFORE UPDATE ON question
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
@@ -116,6 +155,9 @@ BEFORE UPDATE ON question
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
+-- Создание индекса для ускорения запросов по теме
+CREATE INDEX idx_question_topic_id ON question (topic_id);
+
 -- Создание таблицы question_translation
 CREATE TABLE question_translation (
     id UUID PRIMARY KEY,
@@ -123,11 +165,12 @@ CREATE TABLE question_translation (
     language VARCHAR(10) NOT NULL,
     text TEXT NOT NULL,
     description TEXT NOT NULL,
+    hint TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
-CREATE TRIGGER trigger_prevent_update_created_at
+CREATE TRIGGER trigger_prevent_update_created_at_question_translation
 BEFORE UPDATE ON question_translation
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
@@ -146,7 +189,7 @@ CREATE TABLE answer (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
-CREATE TRIGGER trigger_prevent_update_created_at
+CREATE TRIGGER trigger_prevent_update_created_at_answer
 BEFORE UPDATE ON answer
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
@@ -166,7 +209,7 @@ CREATE TABLE answer_translation (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
-CREATE TRIGGER trigger_prevent_update_created_at
+CREATE TRIGGER trigger_prevent_update_created_at_answer_translation
 BEFORE UPDATE ON answer_translation
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
@@ -191,7 +234,7 @@ CREATE TABLE user_question_log (
     CONSTRAINT unique_user_question UNIQUE (user_id, question_id)
 );
 
-CREATE TRIGGER trigger_prevent_update_created_at
+CREATE TRIGGER trigger_prevent_update_created_at_user_question_log
 BEFORE UPDATE ON user_question_log
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
