@@ -1,5 +1,8 @@
 package com.arutyun.quiz_server.user.controller;
 
+import com.arutyun.quiz_server.question.service.StatisticsService;
+import com.arutyun.quiz_server.question.service.model.UserStatistics;
+import com.arutyun.quiz_server.user.converter.UserStatisticsDtoConverter;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.dto.UpdatePasswordRequestDto;
 import com.arutyun.quiz_server.user.dto.UpdateUserRequestDto;
@@ -19,7 +22,9 @@ import java.util.UUID;
 @RequestMapping
 public class UserController {
     final UserService userService;
+    final StatisticsService statisticsService;
     final UserDtoConverter userDtoConverter;
+    final UserStatisticsDtoConverter userStatisticsDtoConverter;
 
     @GetMapping("/api/user/{id}")
     public ResponseEntity<ResponseDto> findUser(
@@ -46,7 +51,7 @@ public class UserController {
                 request.birthDate()
         );
 
-        return  ResponseWrapper.ok(user, userDtoConverter);
+        return ResponseWrapper.ok(user, userDtoConverter);
     }
 
     @PostMapping("api/user/password")
@@ -58,6 +63,14 @@ public class UserController {
                 request.newPassword()
         );
 
-        return  ResponseWrapper.ok("", value -> "Password changed");
+        return ResponseWrapper.ok("", value -> "Password changed");
+    }
+
+    @GetMapping("api/user/statistics")
+    public ResponseEntity<ResponseDto> getUserStatistics() throws BaseException {
+        final UserEntity user = userService.getCurrentUser();
+        final UserStatistics statistics = statisticsService.fetch(user);
+
+        return ResponseWrapper.ok(statistics, userStatisticsDtoConverter);
     }
 }
