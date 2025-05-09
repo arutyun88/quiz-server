@@ -52,6 +52,11 @@ public class ValidationExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ResponseDto> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseWrapper.error(new BadRequestException(ex.getMessage()));
+    }
+
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ResponseDto> handleValidationExceptions(MissingRequestHeaderException ex) {
 
