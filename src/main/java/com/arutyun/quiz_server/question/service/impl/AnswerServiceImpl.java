@@ -53,10 +53,23 @@ public class AnswerServiceImpl implements AnswerService {
         questionLog.setIsCorrect(answer.isCorrect());
         questionLogRepository.save(questionLog);
 
-        final List<UserQuestionLog> allUserAnswers = questionLogRepository.findAllFromUser(user.getId());
-        long correctAnswers = allUserAnswers.stream().filter(UserQuestionLog::getIsCorrect).count();
-        long incorrectAnswers = allUserAnswers.size() - correctAnswers;
-
         return answer.isCorrect();
+    }
+
+    @Override
+    public boolean checkAnswerState(
+            UserEntity user,
+            UUID questionId
+    ) throws BaseException {
+        final UserQuestionLog questionLog = questionLogRepository.findByUserIdAndQuestionId(
+                user.getId(),
+                questionId
+        ).orElseThrow(
+                () -> new AnswerSavingException(
+                        String.format("Answer from question %s not saved", questionId)
+                )
+        );
+
+        return questionLog.getAnswer() != null;
     }
 }

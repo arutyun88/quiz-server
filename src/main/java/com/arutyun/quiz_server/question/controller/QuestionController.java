@@ -1,6 +1,8 @@
 package com.arutyun.quiz_server.question.controller;
 
+import com.arutyun.quiz_server.question.converter.QuestionStateDtoConverter;
 import com.arutyun.quiz_server.question.service.StatisticsService;
+import com.arutyun.quiz_server.question.service.model.QuestionState;
 import com.arutyun.quiz_server.question.service.model.UserStatistics;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.service.UserService;
@@ -24,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -34,6 +38,7 @@ public class QuestionController {
     private final StatisticsService statisticsService;
     private final QuestionDtoConverter questionDtoConverter;
     private final UserAnswerDtoConverter userAnswerDtoConverter;
+    private final QuestionStateDtoConverter questionStateDtoConverter;
 
     @GetMapping("api/questions")
     public ResponseEntity<ResponseDto> questions(
@@ -53,6 +58,20 @@ public class QuestionController {
                 result.getData(),
                 questionDtoConverter,
                 result.getMeta()
+        );
+    }
+
+    @GetMapping("api/questions/{id}/state")
+    public ResponseEntity<ResponseDto> questionState(
+            @PathVariable("id") String questionId
+    ) throws BaseException {
+        final UserEntity user = userService.getCurrentUser();
+
+        final boolean isAnswered = answerService.checkAnswerState(user, UUID.fromString(questionId));
+
+        return ResponseWrapper.ok(
+                new QuestionState(questionId, isAnswered),
+                questionStateDtoConverter
         );
     }
 
