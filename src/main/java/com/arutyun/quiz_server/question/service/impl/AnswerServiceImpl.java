@@ -9,7 +9,6 @@ import com.arutyun.quiz_server.question.data.repository.UserQuestionLogRepositor
 import com.arutyun.quiz_server.question.exception.AnswerConflictException;
 import com.arutyun.quiz_server.question.exception.AnswerSavingException;
 import com.arutyun.quiz_server.question.service.AnswerService;
-import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class AnswerServiceImpl implements AnswerService {
     final UserQuestionLogRepository questionLogRepository;
 
     @Override
-    public UserAnswersStatistic saveUserAnswer(
+    public boolean saveUserAnswer(
             UserEntity user,
             UUID questionId,
             UUID answerId
@@ -32,7 +31,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new AnswerSavingException(String.format("Answer %s not found", answerId)));
 
         if (user == null) {
-            return new UserAnswersStatistic(0, 0, answer.isCorrect());
+            return answer.isCorrect();
         }
 
         final UserQuestionLog questionLog = questionLogRepository.findByUserIdAndQuestionId(
@@ -58,6 +57,6 @@ public class AnswerServiceImpl implements AnswerService {
         long correctAnswers = allUserAnswers.stream().filter(UserQuestionLog::getIsCorrect).count();
         long incorrectAnswers = allUserAnswers.size() - correctAnswers;
 
-        return new UserAnswersStatistic((int) correctAnswers, (int) incorrectAnswers, answer.isCorrect());
+        return answer.isCorrect();
     }
 }

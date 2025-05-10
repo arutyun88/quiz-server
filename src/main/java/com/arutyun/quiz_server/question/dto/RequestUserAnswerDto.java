@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
 public record RequestUserAnswerDto(
-        @JsonProperty("question_id") UUID id,
-        @JsonProperty("answer_id") UUID answer
+        @JsonProperty("question_id") UUID questionId,
+        @JsonProperty("answer_id") UUID answerId
 ) {
 }

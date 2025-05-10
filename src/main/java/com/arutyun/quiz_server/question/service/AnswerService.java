@@ -7,7 +7,7 @@ import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import java.util.UUID;
 
 public interface AnswerService {
-    UserAnswersStatistic saveUserAnswer(
+    boolean saveUserAnswer(
             UserEntity user,
             UUID questionId,
             UUID answerId

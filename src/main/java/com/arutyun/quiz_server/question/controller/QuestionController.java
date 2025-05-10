@@ -1,5 +1,7 @@
 package com.arutyun.quiz_server.question.controller;
 
+import com.arutyun.quiz_server.question.service.StatisticsService;
+import com.arutyun.quiz_server.question.service.model.UserStatistics;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
@@ -29,6 +31,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final UserService userService;
+    private final StatisticsService statisticsService;
     private final QuestionDtoConverter questionDtoConverter;
     private final UserAnswerDtoConverter userAnswerDtoConverter;
 
@@ -58,13 +61,14 @@ public class QuestionController {
             @Valid @RequestBody RequestUserAnswerDto answer
     ) throws BaseException {
         final UserEntity user = userService.getCurrentUser();
-        final UserAnswersStatistic userAnswersStatistic = answerService.saveUserAnswer(
+        final boolean isCorrect = answerService.saveUserAnswer(
                 user,
-                answer.id(),
-                answer.answer()
+                answer.questionId(),
+                answer.answerId()
         );
+        final UserStatistics statistics = statisticsService.fetch(user);
         return ResponseWrapper.ok(
-                userAnswersStatistic,
+                new UserAnswersStatistic(isCorrect, statistics),
                 userAnswerDtoConverter
         );
     }
