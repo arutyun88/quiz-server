@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +48,10 @@ public class UserQuestionLog {
     @Column(name = "is_correct")
     @Setter
     private Boolean isCorrect;
+
+    @Column(name = "answered_at", columnDefinition = "TIMESTAMP")
+    @Setter
+    private Instant answeredAt;
 
     public UserQuestionLog(
             UserEntity user,

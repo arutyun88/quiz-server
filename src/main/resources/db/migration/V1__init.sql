@@ -226,8 +226,8 @@ CREATE TABLE user_question_log (
     question_id UUID NOT NULL,
     answer_id UUID,
     is_correct BOOLEAN,
+    answered_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
     FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE SET NULL,
@@ -238,11 +238,6 @@ CREATE TRIGGER trigger_prevent_update_created_at_user_question_log
 BEFORE UPDATE ON user_question_log
 FOR EACH ROW
 EXECUTE FUNCTION prevent_update_created_at();
-
-CREATE TRIGGER trigger_update_user_question_log
-BEFORE UPDATE ON user_question_log
-FOR EACH ROW
-EXECUTE FUNCTION set_updated_at();
 
 -- Создание индекса для ускорения запроса на фильтрацию по user_id и question_id
 CREATE INDEX idx_user_question_log_user_id_question_id

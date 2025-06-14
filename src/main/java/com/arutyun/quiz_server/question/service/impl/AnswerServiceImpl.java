@@ -1,5 +1,9 @@
 package com.arutyun.quiz_server.question.service.impl;
 
+import com.arutyun.quiz_server.question.data.entity.QuestionEntity;
+import com.arutyun.quiz_server.question.data.repository.QuestionRepository;
+import com.arutyun.quiz_server.question.exception.QuestionNotFoundException;
+import com.arutyun.quiz_server.question.service.model.UserQuestionAnswer;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.common.exception.BaseException;
 import com.arutyun.quiz_server.question.data.entity.AnswerEntity;
@@ -12,13 +16,16 @@ import com.arutyun.quiz_server.question.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AnswerServiceImpl implements AnswerService {
     final AnswerRepository answerRepository;
+    final QuestionRepository questionRepository;
     final UserQuestionLogRepository questionLogRepository;
 
     @Override
@@ -34,24 +41,37 @@ public class AnswerServiceImpl implements AnswerService {
             return answer.isCorrect();
         }
 
-        final UserQuestionLog questionLog = questionLogRepository.findByUserIdAndQuestionId(
+        Optional<UserQuestionLog> questionLog = questionLogRepository.findByUserIdAndQuestionId(
                 user.getId(),
                 questionId
-        ).orElseThrow(
-                () -> new AnswerSavingException(
-                        String.format("Answer %s from question %s not saved", answerId, questionId)
-                )
         );
 
-        if (questionLog.getAnswer() != null) {
+        if (questionLog.isPresent() && questionLog.get().getAnswer() != null) {
             throw new AnswerConflictException(
-                    String.format("Question %s from question %s already answered", answerId, questionId)
+                    String.format("Question %s already answered", questionId)
             );
         }
 
-        questionLog.setAnswer(answer);
-        questionLog.setIsCorrect(answer.isCorrect());
-        questionLogRepository.save(questionLog);
+        if (questionLog.isEmpty()) {
+            final Optional<QuestionEntity> question = questionRepository.findById(questionId);
+            if (question.isEmpty()) {
+                throw new QuestionNotFoundException(
+                        String.format("Question %s not found", questionId)
+                );
+            }
+            questionLogRepository.save(new UserQuestionLog(user, question.get()));
+            questionLog = questionLogRepository.findByUserIdAndQuestionId(
+                    user.getId(),
+                    questionId
+            );
+        }
+
+        if (questionLog.isPresent()) {
+            questionLog.get().setAnswer(answer);
+            questionLog.get().setIsCorrect(answer.isCorrect());
+            questionLog.get().setAnsweredAt(Instant.now());
+            questionLogRepository.save(questionLog.get());
+        }
 
         return answer.isCorrect();
     }
