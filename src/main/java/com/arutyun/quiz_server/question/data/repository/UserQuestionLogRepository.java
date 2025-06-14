@@ -26,4 +26,17 @@ public interface UserQuestionLogRepository extends JpaRepository<UserQuestionLog
     List<UserQuestionLog> findAllFromUser(
             @Param("user_id") UUID userId
     );
+
+    @Query(
+            value = """
+                SELECT * from user_question_log l
+                WHERE l.user_id = :user_id
+                AND l.question_id IN :question_ids
+                """,
+            nativeQuery = true
+    )
+    List<UserQuestionLog> findByUserIdAndQuestionIds(
+            @Param("user_id") UUID userId,
+            @Param("question_ids") List<UUID> questionIds
+    );
 }

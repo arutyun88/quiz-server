@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.lang.Nullable;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -51,7 +52,7 @@ public class UserQuestionLog {
 
     @Column(name = "answered_at", columnDefinition = "TIMESTAMP")
     @Setter
-    private Instant answeredAt;
+    private @Nullable Instant answeredAt;
 
     public UserQuestionLog(
             UserEntity user,

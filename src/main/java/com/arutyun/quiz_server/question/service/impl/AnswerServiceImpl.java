@@ -17,9 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +90,78 @@ public class AnswerServiceImpl implements AnswerService {
         );
 
         return questionLog.getAnswer() != null;
+    }
+
+    @Override
+    public void saveUserAnswers(UserEntity user, List<UserQuestionAnswer> answers) {
+        if (answers.isEmpty()) {
+            return;
+        }
+
+        final List<UUID> questionIds = answers.stream()
+                .map(UserQuestionAnswer::questionId)
+                .distinct()
+                .toList();
+
+        final List<UUID> answerIds = answers.stream()
+                .map(UserQuestionAnswer::answerId)
+                .distinct()
+                .toList();
+
+        List<QuestionEntity> existingQuestions = questionRepository.findAllById(questionIds);
+        Map<UUID, QuestionEntity> questionMap = existingQuestions.stream()
+                .collect(Collectors.toMap(QuestionEntity::getId, answer -> answer));
+
+        List<AnswerEntity> existingAnswers = answerRepository.findAllById(answerIds);
+        Map<UUID, AnswerEntity> answerMap = existingAnswers.stream()
+                .collect(Collectors.toMap(AnswerEntity::getId, answer -> answer));
+
+        List<UserQuestionLog> existingLogs = questionLogRepository.findByUserIdAndQuestionIds(
+                user.getId(),
+                questionIds
+        );
+
+        Map<UUID, UserQuestionLog> existingLogMap = existingLogs.stream()
+                .collect(
+                        Collectors.toMap(
+                                log -> log.getQuestion().getId(),
+                                log -> log
+                        )
+                );
+
+        List<UserQuestionLog> logsToSave = new ArrayList<>();
+
+        for (UserQuestionAnswer userAnswer : answers) {
+            UUID questionId = userAnswer.questionId();
+            UUID answerId = userAnswer.answerId();
+
+            QuestionEntity question = questionMap.get(questionId);
+            if (question == null) {
+                continue;
+            }
+
+            AnswerEntity answer = answerMap.get(answerId);
+            if (answer == null) {
+                continue;
+            }
+
+            UserQuestionLog log = existingLogMap.get(questionId);
+            if (log == null) {
+                log = new UserQuestionLog(user, question);
+                log.setAnswer(answer);
+                log.setIsCorrect(answer.isCorrect());
+                log.setAnsweredAt(userAnswer.answeredAt());
+                logsToSave.add(log);
+            } else if (log.getAnswer() == null) {
+                log.setAnswer(answer);
+                log.setIsCorrect(answer.isCorrect());
+                log.setAnsweredAt(userAnswer.answeredAt());
+                logsToSave.add(log);
+            }
+        }
+
+        if (!logsToSave.isEmpty()) {
+            questionLogRepository.saveAll(logsToSave);
+        }
     }
 }

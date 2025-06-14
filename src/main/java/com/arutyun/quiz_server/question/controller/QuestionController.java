@@ -1,9 +1,12 @@
 package com.arutyun.quiz_server.question.controller;
 
 import com.arutyun.quiz_server.question.converter.QuestionStateDtoConverter;
+import com.arutyun.quiz_server.question.dto.RequestUserAnswersDto;
 import com.arutyun.quiz_server.question.service.StatisticsService;
 import com.arutyun.quiz_server.question.service.model.QuestionState;
+import com.arutyun.quiz_server.question.service.model.UserQuestionAnswer;
 import com.arutyun.quiz_server.question.service.model.UserStatistics;
+import com.arutyun.quiz_server.user.converter.UserStatisticsDtoConverter;
 import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import com.arutyun.quiz_server.user.service.UserService;
 import com.arutyun.quiz_server.common.dto.response.ResponseDto;
@@ -38,6 +41,7 @@ public class QuestionController {
     private final StatisticsService statisticsService;
     private final QuestionDtoConverter questionDtoConverter;
     private final UserAnswerDtoConverter userAnswerDtoConverter;
+    private final UserStatisticsDtoConverter statisticsDtoConverter;
     private final QuestionStateDtoConverter questionStateDtoConverter;
 
     @GetMapping("api/questions")
@@ -89,6 +93,27 @@ public class QuestionController {
         return ResponseWrapper.ok(
                 new UserAnswersStatistic(isCorrect, statistics),
                 userAnswerDtoConverter
+        );
+    }
+
+    @PostMapping("api/questions/answers")
+    public ResponseEntity<ResponseDto> userAnswers(
+            @Valid @RequestBody RequestUserAnswersDto answers
+    ) throws BaseException {
+        final UserEntity user = userService.getCurrentUser();
+        answerService.saveUserAnswers(
+                user,
+                answers.questions().stream().map(
+                        answer -> new UserQuestionAnswer(
+                                answer.questionId(),
+                                answer.answerId(),
+                                answer.answeredAt()
+                        )
+                ).toList()
+        );
+        return ResponseWrapper.ok(
+                statisticsService.fetch(user),
+                statisticsDtoConverter
         );
     }
 }
