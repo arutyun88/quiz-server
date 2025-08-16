@@ -7,6 +7,18 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# ==============================================
+# ENVIRONMENT FILES WITH SECRETS
+# ==============================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# Keep example files in git
+!.env.example
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

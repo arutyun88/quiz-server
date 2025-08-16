@@ -1,32 +1,35 @@
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT}
+
 logging:
   level:
     org:
       springframework:
         security: ERROR
+
 jwt:
-  secret-key: ${JWT_SECRET_KEY:89JZa4FRE7YEelJdnQC/6gYzZZPdEZOizIHJMaDEPNU=}
-  access-expiration-in-ms: 3600000
-  refresh-expiration-in-ms: 604800000
+  secret-key: ${JWT_SECRET_KEY}
+  access-expiration-in-ms: ${JWT_ACCESS_EXPIRATION:3600000}
+  refresh-expiration-in-ms: ${JWT_REFRESH_EXPIRATION:604800000}
+
 spring:
   application:
     name: quiz-server
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_quiz_server}
-    username: ${DB_USERNAME:own_user}
-    password: ${DB_PASSWORD:secret_password}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: false
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+    show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${FORMAT_SQL:true}
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   flyway:
-    enabled: true
+    enabled: ${FLYWAY_ENABLED:true}
     locations: classpath:db/migration
