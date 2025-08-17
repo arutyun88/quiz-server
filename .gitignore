@@ -17,7 +17,7 @@ build/
 .env.staging
 
 # Keep example files in git
-!.env.example
+!env.example
 
 ### IntelliJ IDEA ###
 .idea

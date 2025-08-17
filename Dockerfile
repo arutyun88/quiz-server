@@ -1,5 +1,5 @@
 # Многоэтапная сборка для оптимизации размера образа
-FROM openjdk:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk AS build
 
 # Установка рабочей директории
 WORKDIR /workspace/app
@@ -22,10 +22,10 @@ RUN ./gradlew clean bootJar --no-daemon
 RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
 
 # Финальный образ
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
 # Создание пользователя для запуска приложения
-RUN addgroup -g 1001 -S spring && adduser -u 1001 -S spring -G spring
+RUN groupadd -g 1001 spring && useradd -u 1001 -g spring -s /bin/bash spring
 
 # Установка рабочей директории
 WORKDIR /app
@@ -43,4 +43,4 @@ USER spring:spring
 EXPOSE 8081
 
 # Запуск приложения
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.arutyun.quiz_server.QuizServerApplication"]
+ENTRYPOINT ["java","-cp",".:./lib/*","com.arutyun.quiz_server.QuizServerApplication"]
