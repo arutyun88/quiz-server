@@ -5,8 +5,9 @@ import com.arutyun.quiz_server.user.data.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface TokenRepository extends JpaRepository<TokenEntity, Integer> {
+public interface TokenRepository extends JpaRepository<TokenEntity, UUID> {
     void deleteByUserAndDeviceId(UserEntity user, String deviceId);
 
     Optional<TokenEntity> findByAccessToken(String accessToken);
