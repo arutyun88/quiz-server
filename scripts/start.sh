@@ -27,7 +27,7 @@ get_container_status() {
 choose_profile() {
     echo -e "${BLUE}Выберите режим запуска:${NC}"
     echo -e "  ${YELLOW}1)${NC} Продакшн режим (требует .env файл)"
-    echo -e "  ${YELLOW}2)${NC} Режим разработки (использует .env.example для контейнеров)"
+    echo -e "  ${YELLOW}2)${NC} Режим разработки (использует .env.dev для контейнеров)"
     read -p "Введите номер (1-2): " mode_choice
 
     # Проверка валидности выбора режима
@@ -41,21 +41,21 @@ choose_profile() {
         # Продакшн режим - проверяем .env
         if [ ! -f .env ]; then
             echo -e "${RED}❌ Файл .env не найден${NC}"
-            echo -e "${YELLOW}📋 Создайте файл .env на основе .env.example${NC}"
-            echo -e "${BLUE}💡 Команда: cp .env.example .env${NC}"
+            echo -e "${YELLOW}📋 Создайте файл .env на основе .env.dev${NC}"
+echo -e "${BLUE}💡 Команда: cp .env.dev .env${NC}"
             echo -e "${RED}❗ Отредактируйте .env файл и запустите скрипт снова${NC}"
             exit 1
         fi
         echo -e "${GREEN}✅ Продакшн режим: .env файл найден${NC}"
         check_required_variables
     else
-        # Dev режим - проверяем .env.example
-        if [ ! -f .env.example ]; then
-            echo -e "${RED}❌ Файл .env.example не найден${NC}"
-            echo -e "${RED}❗ Файл .env.example необходим для запуска контейнеров в dev режиме${NC}"
-            exit 1
-        fi
-        echo -e "${GREEN}✅ Режим разработки: .env.example файл найден${NC}"
+        # Dev режим - проверяем .env.dev
+if [ ! -f .env.dev ]; then
+echo -e "${RED}❌ Файл .env.dev не найден${NC}"
+echo -e "${RED}❗ Файл .env.dev необходим для запуска контейнеров в dev режиме${NC}"
+exit 1
+fi
+echo -e "${GREEN}✅ Режим разработки: .env.dev файл найден${NC}"
         check_required_variables
     fi
 }
@@ -138,9 +138,9 @@ get_server_port() {
             echo "8081"
         fi
     else
-        # Dev - читаем из .env.example
-        if [ -f .env.example ]; then
-            port=$(grep "^SERVER_PORT=" .env.example | cut -d'=' -f2 | tr -d '"' | tr -d "'")
+        # Dev - читаем из .env.dev
+if [ -f .env.dev ]; then
+port=$(grep "^SERVER_PORT=" .env.dev | cut -d'=' -f2 | tr -d '"' | tr -d "'")
             echo "${port:-8081}"
         else
             echo "8081"
@@ -159,9 +159,9 @@ get_postgres_port() {
             echo "5432"
         fi
     else
-        # Dev - читаем из .env.example
-        if [ -f .env.example ]; then
-            port=$(grep "^POSTGRES_PORT=" .env.example | cut -d'=' -f2 | tr -d '"' | tr -d "'")
+        # Dev - читаем из .env.dev
+if [ -f .env.dev ]; then
+port=$(grep "^POSTGRES_PORT=" .env.dev | cut -d'=' -f2 | tr -d '"' | tr -d "'")
             echo "${port:-5432}"
         else
             echo "5432"
@@ -174,7 +174,7 @@ get_env_file_flag() {
     if [ "$mode_choice" = "1" ]; then
         echo "--env-file .env"
     else
-        echo "--env-file .env.example"
+        echo "--env-file .env.dev"
     fi
 }
 
@@ -184,13 +184,13 @@ check_required_variables() {
     if [ "$mode_choice" = "1" ]; then
         env_file=".env"
     else
-        env_file=".env.example"
+        env_file=".env.dev"
     fi
 
     echo -e "${BLUE}🔍 Проверка переменных в $env_file...${NC}"
 
     # Список обязательных переменных
-    local required_vars=("JWT_SECRET_KEY" "DB_PASSWORD")
+    local required_vars=("JWT_SECRET_KEY" "POSTGRES_PASSWORD" "POSTGRES_URL")
     local missing_vars=()
 
     for var in "${required_vars[@]}"; do
