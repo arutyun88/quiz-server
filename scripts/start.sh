@@ -26,9 +26,9 @@ get_container_status() {
 # Проверка .env файла
 if [ ! -f .env ]; then
     echo -e "${YELLOW}⚠️  Файл .env не найден${NC}"
-    if [ -f env.example ]; then
+    if [ -f .env.example ]; then
         echo -e "${BLUE}📋 Копирую env.example в .env${NC}"
-        cp env.example .env
+        cp .env.example .env
         echo -e "${RED}❗ Отредактируйте .env файл и запустите скрипт снова${NC}"
         exit 1
     else
