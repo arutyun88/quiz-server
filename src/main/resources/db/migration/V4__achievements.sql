@@ -188,3 +188,18 @@ SELECT
         ELSE 'Описание неизвестного достижения'
     END as description
 FROM achievements a;
+
+-- Создание таблицы достижений пользователей
+CREATE TABLE user_achievements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    user_id UUID NOT NULL,
+    achievement_id UUID NOT NULL,
+    unlocked_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (achievement_id) REFERENCES achievements (id) ON DELETE CASCADE,
+    UNIQUE (user_id, achievement_id)
+);
+
+CREATE INDEX idx_user_achievements_user_id ON user_achievements (user_id);
+
+CREATE INDEX idx_user_achievements_achievement_id ON user_achievements (achievement_id);
