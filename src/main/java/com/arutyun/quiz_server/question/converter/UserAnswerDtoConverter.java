@@ -1,22 +1,23 @@
 package com.arutyun.quiz_server.question.converter;
 
-import com.arutyun.quiz_server.common.dto.converter.DtoConverter;
 import com.arutyun.quiz_server.question.dto.ResponseUserAnswerDto;
 import com.arutyun.quiz_server.question.service.model.UserAnswersStatistic;
 import com.arutyun.quiz_server.user.converter.UserStatisticsDtoConverter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.Function;
+
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserAnswerDtoConverter implements DtoConverter<ResponseUserAnswerDto, UserAnswersStatistic> {
+public class UserAnswerDtoConverter implements Function<UserAnswersStatistic, ResponseUserAnswerDto> {
     final UserStatisticsDtoConverter statisticsDtoConverter;
 
     @Override
-    public ResponseUserAnswerDto convert(UserAnswersStatistic data) {
+    public ResponseUserAnswerDto apply(UserAnswersStatistic data) {
         return new ResponseUserAnswerDto(
                 data.lastIsRight(),
-                statisticsDtoConverter.convert(data.statistics())
-        );
+                statisticsDtoConverter.apply(data.statistics()));
     }
 }
