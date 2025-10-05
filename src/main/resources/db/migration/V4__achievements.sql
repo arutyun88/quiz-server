@@ -28,37 +28,18 @@ CREATE INDEX idx_achievement_translations_language ON achievement_translations (
 INSERT INTO
     achievements (code, points, category)
 VALUES
-    -- Достижения за первые шаги
-    (
-        'FIRST_QUESTION',
-        10,
-        'BEGINNER'
-    ),
-    (
-        'FIRST_CORRECT',
-        15,
-        'BEGINNER'
-    ),
+-- Достижения за первые шаги
+('FIRST_QUESTION', 10, 'BEGINNER'),
+('FIRST_CORRECT', 15, 'BEGINNER'),
 
 -- Достижения за количество вопросов
-(
-    'QUESTION_MASTER_10',
-    50,
-    'PROGRESS'
-),
-(
-    'QUESTION_MASTER_50',
-    150,
-    'PROGRESS'
-),
-(
-    'QUESTION_MASTER_100',
-    300,
-    'PROGRESS'
-),
+('QUESTION_MASTER_10', 50, 'PROGRESS'),
+('QUESTION_MASTER_50', 150, 'PROGRESS'),
+('QUESTION_MASTER_100', 300, 'PROGRESS'),
 
 -- Достижения за точность
-('PERFECT_10', 100, 'ACCURACY'), ('PERFECT_50', 250, 'ACCURACY'),
+('PERFECT_10', 100, 'ACCURACY'),
+('PERFECT_50', 250, 'ACCURACY'),
 
 -- Достижения за серии дней
 ('STREAK_3', 75, 'STREAK'),
@@ -71,21 +52,9 @@ VALUES
 ('POINTS_1000', 200, 'POINTS'),
 
 -- Достижения за точность ответов
-(
-    'ACCURACY_80',
-    150,
-    'ACCURACY'
-),
-(
-    'ACCURACY_90',
-    300,
-    'ACCURACY'
-),
-(
-    'ACCURACY_95',
-    500,
-    'ACCURACY'
-);
+('ACCURACY_80', 150, 'ACCURACY'),
+('ACCURACY_90', 300, 'ACCURACY'),
+('ACCURACY_95', 500, 'ACCURACY');
 
 -- Вставка английских переводов для существующих достижений
 INSERT INTO
@@ -203,3 +172,26 @@ CREATE TABLE user_achievements (
 CREATE INDEX idx_user_achievements_user_id ON user_achievements (user_id);
 
 CREATE INDEX idx_user_achievements_achievement_id ON user_achievements (achievement_id);
+
+-- Дополнительные индексы для оптимизации запросов ачивок
+-- Эти индексы улучшат производительность пагинации и сортировки
+
+-- Составной индекс для user_achievements по user_id и unlocked_at
+-- Используется для сортировки разблокированных ачивок по дате
+CREATE INDEX idx_user_achievements_user_unlocked_at 
+ON user_achievements (user_id, unlocked_at DESC);
+
+-- Составной индекс для achievements по category и points
+-- Используется для поиска следующего достижения в категории
+CREATE INDEX idx_achievements_category_points 
+ON achievements (category, points);
+
+-- Составной индекс для achievement_translations по achievement_id и language_code
+-- Используется для JOIN с локализацией
+CREATE INDEX idx_achievement_translations_achievement_language 
+ON achievement_translations (achievement_id, language_code);
+
+-- Индекс для user_achievements по achievement_id и user_id
+-- Используется для проверки разблокировки и подсчета
+CREATE INDEX idx_user_achievements_achievement_user 
+ON user_achievements (achievement_id, user_id);
