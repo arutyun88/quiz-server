@@ -11,6 +11,4 @@ public interface TokenRepository extends JpaRepository<TokenEntity, UUID> {
     void deleteByUserAndDeviceId(UserEntity user, String deviceId);
 
     Optional<TokenEntity> findByAccessToken(String accessToken);
-
-    Optional<TokenEntity> findByRefreshToken(String refreshToken);
 }

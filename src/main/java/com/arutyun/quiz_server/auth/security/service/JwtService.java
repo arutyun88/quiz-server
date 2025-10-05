@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -24,8 +23,7 @@ public class JwtService {
     @Value("${jwt.access-expiration-in-ms}")
     private long ACCESS_TOKEN_VALIDITY;
 
-    @Value("${jwt.refresh-expiration-in-ms}")
-    private long REFRESH_TOKEN_VALIDITY;
+
 
     private static final String TOKEN_TYPE = "Bearer ";
 
@@ -47,12 +45,6 @@ public class JwtService {
                         .toList());
         claims.put("token_type", "access_token");
         return generateToken(claims, userDetails, ACCESS_TOKEN_VALIDITY);
-    }
-
-    public String generateRefreshToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("token_type", "refresh_token");
-        return generateToken(claims, userDetails, REFRESH_TOKEN_VALIDITY);
     }
 
     private String generateToken(
@@ -77,12 +69,9 @@ public class JwtService {
                 token,
                 claims -> claims.get("token_type").toString().equals("access_token")
         );
-        return email.equals(userDetails.getUsername()) && !isTokenExpired(token) && isAccessToken;
+        return email.equals(userDetails.getUsername()) && isAccessToken;
     }
 
-    public boolean isTokenExpired(String token) throws UserUnauthorizedException {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
-    }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws UserUnauthorizedException {
         final Claims claims = extractAllClaims(token);

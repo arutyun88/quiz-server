@@ -33,9 +33,6 @@ public class TokenEntity {
     @Column(name = "access_token", nullable = false)
     private String accessToken;
 
-    @Column(name = "refresh_token", nullable = false)
-    private String refreshToken;
-
     @Column(name = "device_id", nullable = false)
     private String deviceId;
 
@@ -45,12 +42,10 @@ public class TokenEntity {
 
     public TokenEntity(
             String accessToken,
-            String refreshToken,
             String deviceId,
             UserEntity user
     ) {
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
         this.deviceId = deviceId;
         this.user = user;
     }

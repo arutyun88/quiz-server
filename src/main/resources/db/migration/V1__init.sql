@@ -85,7 +85,6 @@ CREATE TABLE tokens
 (
     id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     access_token  VARCHAR(255) NOT NULL,
-    refresh_token VARCHAR(255) NOT NULL,
     user_id       UUID         NOT NULL,
     device_id     VARCHAR(100) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,

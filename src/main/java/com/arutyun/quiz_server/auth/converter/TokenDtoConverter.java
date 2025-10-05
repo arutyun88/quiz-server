@@ -12,8 +12,7 @@ public class TokenDtoConverter implements Function<TokenEntity, ResponseTokenDto
     @Override
     public ResponseTokenDto apply(TokenEntity data) {
         return new ResponseTokenDto(
-                data.getAccessToken(),
-                data.getRefreshToken()
+                data.getAccessToken()
         );
     }
 }

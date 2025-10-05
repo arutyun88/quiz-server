@@ -60,20 +60,6 @@ public class AuthController {
         return ResponseWrapper.ok(token, tokenDtoConverter);
     }
 
-    @PostMapping("/api/auth/refresh")
-    public ResponseEntity<ResponseDto> refresh(
-            @RequestHeader("X-Device-ID") String deviceId,
-            @RequestParam String token
-    ) throws BaseException {
-        final TokenEntity oldToken = authService.fetchTokenByRefresh(deviceId, token);
-
-        final TokenEntity newToken = authService.generateToken(
-                oldToken.getUser(),
-                deviceId
-        );
-
-        return ResponseWrapper.ok(newToken, tokenDtoConverter);
-    }
 
     @PostMapping("/api/auth/logout")
     public ResponseEntity<ResponseDto> logout(
